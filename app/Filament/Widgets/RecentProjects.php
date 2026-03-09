@@ -20,7 +20,7 @@ class RecentProjects extends BaseWidget
         return $table
             ->query(
                 Project::query()
-                    ->with(['status', 'person'])
+                    ->with(['status', 'person', 'category'])
                     ->latest()
                     ->limit(5)
             )
@@ -33,7 +33,7 @@ class RecentProjects extends BaseWidget
                     ->label('Estado')
                     ->badge()
                     ->color(fn ($state, $record) => $record->status->color ?? 'gray'),
-                TextColumn::make('category')
+                TextColumn::make('category.name')
                     ->label('Categoría'),
                 TextColumn::make('person.name')
                     ->label('Persona'),

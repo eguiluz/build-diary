@@ -512,20 +512,20 @@
 
         <div class="dates">
             @if ($project->started_at)
-                <span>📅 Iniciado: {{ $project->started_at->format('d/m/Y') }}</span>
+                <span>📅 {{ __('app.public.started') }}: {{ $project->started_at->format('d/m/Y') }}</span>
             @endif
             @if ($project->due_date)
-                <span>⏰ Fecha límite: {{ $project->due_date->format('d/m/Y') }}</span>
+                <span>⏰ {{ __('app.public.due_date') }}: {{ $project->due_date->format('d/m/Y') }}</span>
             @endif
             @if ($project->completed_at)
-                <span>✅ Completado: {{ $project->completed_at->format('d/m/Y') }}</span>
+                <span>✅ {{ __('app.public.completed') }}: {{ $project->completed_at->format('d/m/Y') }}</span>
             @endif
         </div>
     </div>
 
     @if ($project->files->where('type', 'image')->count() > 0)
         <div class="section">
-            <h2 class="section-title">📷 Galería de imágenes</h2>
+            <h2 class="section-title">📷 {{ __('app.public.image_gallery') }}</h2>
             <div class="gallery">
                 <div class="gallery-grid">
                     @foreach ($project->files->where('type', 'image') as $file)
@@ -552,14 +552,14 @@
 
     @if ($project->relationLoaded('tasks') && $project->tasks->count() > 0)
         <div class="section">
-            <h2 class="section-title">📋 Checklist</h2>
+            <h2 class="section-title">📋 {{ __('app.public.checklist') }}</h2>
             @php
                 $completedTasks = $project->tasks->where('is_completed', true)->count();
                 $totalTasks = $project->tasks->count();
                 $taskProgress = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
             @endphp
             <div class="checklist-progress">
-                <span style="font-weight: 600;">{{ $completedTasks }} / {{ $totalTasks }} tareas completadas</span>
+                <span style="font-weight: 600;">{{ __('app.public.tasks_completed', ['completed' => $completedTasks, 'total' => $totalTasks]) }}</span>
                 <span style="float: right; color: {{ $taskProgress === 100 ? '#22c55e' : '#f59e0b' }}; font-weight: 600;">{{ $taskProgress }}%</span>
                 <div class="progress-bar">
                     <div class="progress-bar-fill {{ $taskProgress === 100 ? 'progress-bar-fill-complete' : 'progress-bar-fill-partial' }}" style="width: {{ $taskProgress }}%;"></div>
@@ -581,19 +581,19 @@
 
     @if ($project->relationLoaded('expenses') && $project->expenses->count() > 0)
         <div class="section">
-            <h2 class="section-title">💰 Presupuesto</h2>
+            <h2 class="section-title">💰 {{ __('app.public.budget') }}</h2>
 
             <div class="budget-summary">
                 <div class="budget-card" style="margin-right: 10px;">
-                    <div class="budget-card-label">Total</div>
+                    <div class="budget-card-label">{{ __('app.public.total') }}</div>
                     <div class="budget-card-value budget-total">{{ number_format($project->total_budget, 2, ',', '.') }} €</div>
                 </div>
                 <div class="budget-card" style="margin-right: 10px;">
-                    <div class="budget-card-label">Gastado</div>
+                    <div class="budget-card-label">{{ __('app.public.spent') }}</div>
                     <div class="budget-card-value budget-spent">{{ number_format($project->spent_budget, 2, ',', '.') }} €</div>
                 </div>
                 <div class="budget-card">
-                    <div class="budget-card-label">Pendiente</div>
+                    <div class="budget-card-label">{{ __('app.public.pending') }}</div>
                     <div class="budget-card-value budget-pending">{{ number_format($project->pending_budget, 2, ',', '.') }} €</div>
                 </div>
             </div>
@@ -602,7 +602,7 @@
                 $budgetProgress = $project->budget_progress;
             @endphp
             <div class="checklist-progress" style="margin-bottom: 20px;">
-                <span style="font-weight: 600;">Progreso del gasto</span>
+                <span style="font-weight: 600;">{{ __('app.public.spending_progress') }}</span>
                 <span style="float: right; color: {{ $budgetProgress === 100 ? '#22c55e' : '#f59e0b' }}; font-weight: 600;">{{ $budgetProgress }}%</span>
                 <div class="progress-bar">
                     <div class="progress-bar-fill {{ $budgetProgress === 100 ? 'progress-bar-fill-complete' : 'progress-bar-fill-partial' }}" style="width: {{ $budgetProgress }}%;"></div>
@@ -652,7 +652,7 @@
 
     @if ($project->links->count() > 0)
         <div class="section">
-            <h2 class="section-title">🔗 Enlaces</h2>
+            <h2 class="section-title">🔗 {{ __('app.public.links') }}</h2>
             <ul style="list-style: none; padding: 0; margin: 0;">
                 @foreach ($project->links as $link)
                     <li style="margin-bottom: 12px; padding-left: 20px; position: relative;">
@@ -673,7 +673,7 @@
 
     @if ($project->files->where('type', '!=', 'image')->count() > 0)
         <div class="section">
-            <h2 class="section-title">📁 Archivos descargables</h2>
+            <h2 class="section-title">📁 {{ __('app.public.downloadable_files') }}</h2>
             <ul style="list-style: none; padding: 0; margin: 0;">
                 @foreach ($project->files->where('type', '!=', 'image') as $file)
                     <li style="margin-bottom: 12px; padding-left: 20px; position: relative;">
@@ -702,7 +702,7 @@
 
     @if ($project->diaryEntries->count() > 0)
         <div class="section">
-            <h2 class="section-title">Diario del proyecto</h2>
+            <h2 class="section-title">{{ __('app.public.project_diary') }}</h2>
             <div class="timeline">
                 @foreach ($project->diaryEntries as $entry)
                     <div class="timeline-entry">
@@ -718,11 +718,11 @@
                                     default => 'entry-type-note',
                                 };
                                 $typeLabel = match ($entry->type) {
-                                    'progress' => 'Progreso',
-                                    'issue' => 'Problema',
-                                    'solution' => 'Solución',
-                                    'milestone' => 'Hito',
-                                    'note' => 'Nota',
+                                    'progress' => __('app.public.entry_types.progress'),
+                                    'issue' => __('app.public.entry_types.issue'),
+                                    'solution' => __('app.public.entry_types.solution'),
+                                    'milestone' => __('app.public.entry_types.milestone'),
+                                    'note' => __('app.public.entry_types.note'),
                                     default => ucfirst($entry->type),
                                 };
                             @endphp
@@ -739,7 +739,7 @@
 
                         @if ($entry->time_spent_minutes)
                             <div class="entry-time">
-                                ⏱️ {{ floor($entry->time_spent_minutes / 60) }}h {{ $entry->time_spent_minutes % 60 }}m dedicados
+                                ⏱️ {{ __('app.public.time_dedicated', ['hours' => floor($entry->time_spent_minutes / 60), 'minutes' => $entry->time_spent_minutes % 60]) }}
                             </div>
                         @endif
                     </div>
@@ -752,12 +752,12 @@
         <div class="footer-content">
             <div class="footer-text">
                 <strong>📔 Build Diary</strong><br>
-                Generado el {{ now()->format('d/m/Y H:i') }}<br>
+                {{ __('app.public.generated_on', ['date' => now()->format('d/m/Y H:i')]) }}<br>
                 <span style="color: #f59e0b;">{{ route('public.project.show', $project->slug) }}</span>
             </div>
             <div class="footer-qr">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode(route('public.project.show', $project->slug)) }}" alt="QR Code">
-                <div class="qr-label">Escanea para ver online</div>
+                <div class="qr-label">{{ __('app.public.scan_to_view_online') }}</div>
             </div>
         </div>
     </div>

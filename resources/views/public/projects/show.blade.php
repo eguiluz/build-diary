@@ -36,7 +36,7 @@
                 </a>
 
                 <a class="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" href="{{ route('public.gallery', $project->user) }}">
-                    ← Ver más proyectos
+                    {{ __('app.public.view_more_projects') }}
                 </a>
 
                 <div class="flex items-center gap-3">
@@ -82,9 +82,9 @@
                                 default => '#64748b',
                             };
                             $priorityLabel = match ($project->priority) {
-                                1 => 'Prioridad baja',
-                                2 => 'Prioridad media',
-                                3 => 'Prioridad alta',
+                                1 => __('app.public.priority_low'),
+                                2 => __('app.public.priority_medium'),
+                                3 => __('app.public.priority_high'),
                                 default => '',
                             };
                         @endphp
@@ -130,7 +130,7 @@
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span>Iniciado: {{ $project->started_at->format('d M Y') }}</span>
+                            <span>{{ __('app.public.started') }}: {{ $project->started_at->format('d M Y') }}</span>
                         </div>
                     @endif
                     @if ($project->due_date)
@@ -138,7 +138,7 @@
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Fecha límite: {{ $project->due_date->format('d M Y') }}</span>
+                            <span>{{ __('app.public.due_date') }}: {{ $project->due_date->format('d M Y') }}</span>
                         </div>
                     @endif
                     @if ($project->completed_at)
@@ -146,7 +146,7 @@
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
-                            <span>Completado: {{ $project->completed_at->format('d M Y') }}</span>
+                            <span>{{ __('app.public.completed') }}: {{ $project->completed_at->format('d M Y') }}</span>
                         </div>
                     @endif
                 </div>
@@ -160,9 +160,9 @@
                         <div>
                             <p class="text-sm text-slate-500 dark:text-slate-400">
                                 @if ($project->person_reason)
-                                    {{ $project->person_reason_label }} para
+                                    {{ $project->person_reason_label }} {{ __('app.public.for') }}
                                 @else
-                                    Dedicado a
+                                    {{ __('app.public.dedicated_to') }}
                                 @endif
                             </p>
                             <p class="font-semibold text-slate-900 dark:text-white">
@@ -211,10 +211,10 @@
                                 <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                 </svg>
-                                Checklist
+                                {{ __('app.public.checklist') }}
                             </h2>
                             <span class="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                {{ $project->tasks->where('is_completed', true)->count() }} / {{ $project->tasks->count() }} tareas
+                                {{ $project->tasks->where('is_completed', true)->count() }} / {{ $project->tasks->count() }} {{ __('app.public.tasks') }}
                             </span>
                         </div>
 
@@ -228,14 +228,14 @@
                             </div>
                             <div class="mt-2 flex items-center justify-between text-sm">
                                 <span class="{{ $progress === 100 ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400' }} font-medium">
-                                    {{ $progress }}% completado
+                                    {{ __('app.public.percent_completed', ['percent' => $progress]) }}
                                 </span>
                                 @if ($progress === 100)
                                     <span class="flex items-center gap-1 text-green-600 dark:text-green-400">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        ¡Completado!
+                                        {{ __('app.public.all_completed') }}
                                     </span>
                                 @endif
                             </div>
@@ -280,22 +280,22 @@
                                 <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Presupuesto
+                                {{ __('app.public.budget') }}
                             </h2>
                         </div>
 
                         <!-- Budget Summary -->
                         <div class="mb-6 grid grid-cols-3 gap-4">
                             <div class="rounded-xl bg-slate-50 p-4 text-center dark:bg-slate-700/50">
-                                <p class="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Total</p>
+                                <p class="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{{ __('app.public.total') }}</p>
                                 <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($project->total_budget, 2, ',', '.') }} €</p>
                             </div>
                             <div class="rounded-xl bg-green-50 p-4 text-center dark:bg-green-900/20">
-                                <p class="text-xs font-medium uppercase tracking-wide text-green-600 dark:text-green-400">Gastado</p>
+                                <p class="text-xs font-medium uppercase tracking-wide text-green-600 dark:text-green-400">{{ __('app.public.spent') }}</p>
                                 <p class="mt-1 text-2xl font-bold text-green-600 dark:text-green-400">{{ number_format($project->spent_budget, 2, ',', '.') }} €</p>
                             </div>
                             <div class="rounded-xl bg-amber-50 p-4 text-center dark:bg-amber-900/20">
-                                <p class="text-xs font-medium uppercase tracking-wide text-amber-600 dark:text-amber-400">Pendiente</p>
+                                <p class="text-xs font-medium uppercase tracking-wide text-amber-600 dark:text-amber-400">{{ __('app.public.pending') }}</p>
                                 <p class="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">{{ number_format($project->pending_budget, 2, ',', '.') }} €</p>
                             </div>
                         </div>
@@ -309,18 +309,18 @@
                                 <div class="{{ $budgetProgress === 100 ? 'bg-green-500' : 'bg-amber-500' }} h-full rounded-full transition-all duration-500" style="width: {{ $budgetProgress }}%"></div>
                             </div>
                             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                                {{ $budgetProgress }}% del presupuesto gastado
+                                {{ __('app.public.budget_percent_spent', ['percent' => $budgetProgress]) }}
                             </p>
                         </div>
 
                         <!-- Expenses by Category -->
                         @php
                             $categories = [
-                                'material' => ['name' => 'Materiales', 'icon' => '🧱', 'color' => 'blue'],
-                                'tool' => ['name' => 'Herramientas', 'icon' => '🔧', 'color' => 'orange'],
-                                'consumable' => ['name' => 'Consumibles', 'icon' => '📦', 'color' => 'gray'],
-                                'service' => ['name' => 'Servicios', 'icon' => '👷', 'color' => 'green'],
-                                'other' => ['name' => 'Otros', 'icon' => '📋', 'color' => 'slate'],
+                                'material' => ['name' => __('app.public.expense_categories.material'), 'icon' => '🧱', 'color' => 'blue'],
+                                'tool' => ['name' => __('app.public.expense_categories.tool'), 'icon' => '🔧', 'color' => 'orange'],
+                                'consumable' => ['name' => __('app.public.expense_categories.consumable'), 'icon' => '📦', 'color' => 'gray'],
+                                'service' => ['name' => __('app.public.expense_categories.service'), 'icon' => '👷', 'color' => 'green'],
+                                'other' => ['name' => __('app.public.expense_categories.other'), 'icon' => '📋', 'color' => 'slate'],
                             ];
                             $groupedExpenses = $project->expenses->groupBy('category');
                         @endphp
@@ -407,7 +407,7 @@
                             <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                             </svg>
-                            Enlaces
+                            {{ __('app.public.links') }}
                         </h2>
                         <ul class="space-y-3">
                             @foreach ($project->links as $link)
@@ -440,7 +440,7 @@
                             <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                             </svg>
-                            Archivos descargables
+                            {{ __('app.public.downloadable_files') }}
                         </h2>
                         <ul class="space-y-3">
                             @foreach ($project->files->where('type', '!=', 'image') as $file)
@@ -471,7 +471,7 @@
                                             @endif
                                         </p>
                                     </div>
-                                    <a class="shrink-0 rounded-lg bg-amber-100 p-2 text-amber-600 transition-colors hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50" href="{{ $file->url }}" title="Descargar" download>
+                                    <a class="shrink-0 rounded-lg bg-amber-100 p-2 text-amber-600 transition-colors hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50" href="{{ $file->url }}" title="{{ __('app.public.download') }}" download>
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                         </svg>
@@ -490,7 +490,7 @@
                         <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
-                        Diario del proyecto
+                        {{ __('app.public.project_diary') }}
                     </h2>
 
                     <!-- Timeline Container -->
@@ -526,11 +526,11 @@
                                                 <div class="{{ $index % 2 === 0 ? 'right-4' : 'left-4' }} absolute -top-2">
                                                     @php
                                                         $typeConfig = match ($entry->type) {
-                                                            'progress' => ['bg' => 'bg-blue-100 dark:bg-blue-900/30', 'text' => 'text-blue-700 dark:text-blue-400', 'label' => 'Progreso'],
-                                                            'issue' => ['bg' => 'bg-red-100 dark:bg-red-900/30', 'text' => 'text-red-700 dark:text-red-400', 'label' => 'Problema'],
-                                                            'solution' => ['bg' => 'bg-green-100 dark:bg-green-900/30', 'text' => 'text-green-700 dark:text-green-400', 'label' => 'Solución'],
-                                                            'milestone' => ['bg' => 'bg-purple-100 dark:bg-purple-900/30', 'text' => 'text-purple-700 dark:text-purple-400', 'label' => 'Hito'],
-                                                            'note' => ['bg' => 'bg-slate-100 dark:bg-slate-700', 'text' => 'text-slate-700 dark:text-slate-300', 'label' => 'Nota'],
+                                                            'progress' => ['bg' => 'bg-blue-100 dark:bg-blue-900/30', 'text' => 'text-blue-700 dark:text-blue-400', 'label' => __('app.public.entry_types.progress')],
+                                                            'issue' => ['bg' => 'bg-red-100 dark:bg-red-900/30', 'text' => 'text-red-700 dark:text-red-400', 'label' => __('app.public.entry_types.issue')],
+                                                            'solution' => ['bg' => 'bg-green-100 dark:bg-green-900/30', 'text' => 'text-green-700 dark:text-green-400', 'label' => __('app.public.entry_types.solution')],
+                                                            'milestone' => ['bg' => 'bg-purple-100 dark:bg-purple-900/30', 'text' => 'text-purple-700 dark:text-purple-400', 'label' => __('app.public.entry_types.milestone')],
+                                                            'note' => ['bg' => 'bg-slate-100 dark:bg-slate-700', 'text' => 'text-slate-700 dark:text-slate-300', 'label' => __('app.public.entry_types.note')],
                                                             default => ['bg' => 'bg-slate-100 dark:bg-slate-700', 'text' => 'text-slate-700 dark:text-slate-300', 'label' => ucfirst($entry->type)],
                                                         };
                                                     @endphp
@@ -558,7 +558,7 @@
                                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
-                                                    <span>{{ floor($entry->time_spent_minutes / 60) }}h {{ $entry->time_spent_minutes % 60 }}m dedicados</span>
+                                                    <span>{{ __('app.public.time_dedicated', ['hours' => floor($entry->time_spent_minutes / 60), 'minutes' => $entry->time_spent_minutes % 60]) }}</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -590,7 +590,7 @@
                     <span class="font-semibold text-slate-900 dark:text-white">Build Diary</span>
                 </div>
                 <p class="text-sm text-slate-500 dark:text-slate-400">
-                    Publicado con Build Diary
+                    {{ __('app.public.published_with') }}
                 </p>
             </div>
         </div>
