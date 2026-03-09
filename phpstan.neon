@@ -1,0 +1,16 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+
+    level: 6
+
+    ignoreErrors:
+        # Legacy controllers - views not created yet (using Filament admin)
+        - message: '#Parameter \#1 \$view of function view expects view-string\|null, string given#'
+          paths:
+            - app/Http/Controllers/*
+
+    excludePaths:
