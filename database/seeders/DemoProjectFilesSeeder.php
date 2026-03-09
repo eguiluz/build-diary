@@ -40,7 +40,11 @@ class DemoProjectFilesSeeder extends Seeder
 
     public function run(): void
     {
-        $projects = Project::whereIn('category', array_keys($this->imagesByCategory))->get();
+        $projects = Project::with('category')
+            ->whereHas('category', function ($query) {
+                $query->whereIn('slug', array_keys($this->imagesByCategory));
+            })
+            ->get();
 
         if ($projects->isEmpty()) {
             $this->command->warn('No hay proyectos para añadir imágenes. Ejecuta DemoProjectsSeeder primero.');
@@ -54,7 +58,8 @@ class DemoProjectFilesSeeder extends Seeder
         $totalImages = 0;
 
         foreach ($projects as $project) {
-            $categoryImages = $this->imagesByCategory[$project->category] ?? [];
+            $categorySlug = $project->category->slug ?? null;
+            $categoryImages = $this->imagesByCategory[$categorySlug] ?? [];
 
             if (empty($categoryImages)) {
                 continue;

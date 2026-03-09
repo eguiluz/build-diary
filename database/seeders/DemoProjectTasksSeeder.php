@@ -45,7 +45,11 @@ class DemoProjectTasksSeeder extends Seeder
 
     public function run(): void
     {
-        $projects = Project::whereIn('category', array_keys($this->tasksByCategory))->get();
+        $projects = Project::with('category')
+            ->whereHas('category', function ($query) {
+                $query->whereIn('slug', array_keys($this->tasksByCategory));
+            })
+            ->get();
 
         if ($projects->isEmpty()) {
             $this->command->warn('No hay proyectos para añadir tareas. Ejecuta DemoProjectsSeeder primero.');
@@ -56,7 +60,8 @@ class DemoProjectTasksSeeder extends Seeder
         $totalTasks = 0;
 
         foreach ($projects as $project) {
-            $categoryTasks = $this->tasksByCategory[$project->category] ?? [];
+            $categorySlug = $project->category->slug ?? null;
+            $categoryTasks = $this->tasksByCategory[$categorySlug] ?? [];
 
             if (empty($categoryTasks)) {
                 continue;
