@@ -19,14 +19,25 @@ class UpcomingBirthdays extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $today = now();
+        $people = Person::query()
+            ->whereNotNull('birthday')
+            ->get()
+            ->filter(function ($person) use ($today) {
+                $bday = $person->birthday;
+                if (! $bday) {
+                    return false;
+                }
+                $bdayMonthDay = $bday->format('md');
+                $todayMonthDay = $today->format('md');
+
+                return $bdayMonthDay >= $todayMonthDay;
+            })
+            ->sortBy(fn ($person) => $person->birthday->format('md'))
+            ->take(5);
+
         return $table
-            ->query(
-                Person::query()
-                    ->whereNotNull('birthday')
-                    ->whereRaw("DATE_FORMAT(birthday, '%m-%d') >= DATE_FORMAT(NOW(), '%m-%d')")
-                    ->orderByRaw("DATE_FORMAT(birthday, '%m-%d')")
-                    ->limit(5)
-            )
+            ->query(fn () => $people)
             ->columns([
                 TextColumn::make('name')
                     ->label('Nombre'),
