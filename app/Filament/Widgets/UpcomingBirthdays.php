@@ -37,7 +37,7 @@ class UpcomingBirthdays extends BaseWidget
             ->take(5);
 
         return $table
-            ->query(fn () => $people)
+            ->query(Person::query()->whereNotNull('birthday'))
             ->columns([
                 TextColumn::make('name')
                     ->label('Nombre'),
@@ -46,5 +46,28 @@ class UpcomingBirthdays extends BaseWidget
                     ->date('d M'),
             ])
             ->paginated(false);
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Person>|\Illuminate\Contracts\Pagination\Paginator<int, \App\Models\Person>|\Illuminate\Contracts\Pagination\CursorPaginator<int, \App\Models\Person> */
+    public function getTableRecords(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Contracts\Pagination\Paginator|\Illuminate\Contracts\Pagination\CursorPaginator
+    {
+        $today = now();
+
+        return Person::query()
+            ->whereNotNull('birthday')
+            ->get()
+            ->filter(function ($person) use ($today) {
+                $bday = $person->birthday;
+                if (! $bday) {
+                    return false;
+                }
+                $bdayMonthDay = $bday->format('md');
+                $todayMonthDay = $today->format('md');
+
+                return $bdayMonthDay >= $todayMonthDay;
+            })
+            ->sortBy(fn ($person) => $person->birthday->format('md'))
+            ->take(5)
+            ->values();
     }
 }
