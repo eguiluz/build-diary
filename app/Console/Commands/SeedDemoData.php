@@ -54,6 +54,7 @@ class SeedDemoData extends Command
         // Asegurar que existan los estados y el usuario admin
         $this->info('Preparando datos base...');
         $this->callSilently('db:seed', ['--class' => 'ProjectStatusSeeder']);
+        $this->callSilently('db:seed', ['--class' => 'ProjectCategorySeeder']);
         $this->callSilently('db:seed', ['--class' => 'AdminUserSeeder']);
 
         // Cargar datos de demo
