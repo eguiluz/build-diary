@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Data;
+namespace App\DTO;
 
 use Carbon\Carbon;
 
-final readonly class CalendarEventData
+final readonly class CalendarEventDTO
 {
     public function __construct(
         public string $title,

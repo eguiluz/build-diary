@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Data\PersonData;
+use App\DTO\PersonDTO;
 use App\Http\Requests\Person\StorePersonRequest;
 use App\Http\Requests\Person\UpdatePersonRequest;
 use App\Models\Person;
@@ -60,21 +60,21 @@ final class PersonController extends Controller
     {
         $this->authorize('create', Person::class);
 
-        $data = PersonData::fromArray($request->validated());
+        $dto = PersonDTO::fromArray($request->validated());
 
         $person = Person::create([
             'user_id' => $request->user()->id,
-            'name' => $data->name,
-            'email' => $data->email,
-            'phone' => $data->phone,
-            'birthday' => $data->birthday,
-            'birthday_reminder' => $data->birthdayReminder,
-            'reminder_days_before' => $data->reminderDaysBefore,
-            'notes' => $data->notes,
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'phone' => $dto->phone,
+            'birthday' => $dto->birthday,
+            'birthday_reminder' => $dto->birthdayReminder,
+            'reminder_days_before' => $dto->reminderDaysBefore,
+            'notes' => $dto->notes,
         ]);
 
-        if ($data->tagIds) {
-            $person->syncTags($data->tagIds);
+        if ($dto->tagIds) {
+            $person->syncTags($dto->tagIds);
         }
 
         if ($request->wantsJson()) {
@@ -99,20 +99,20 @@ final class PersonController extends Controller
     {
         $this->authorize('update', $person);
 
-        $data = PersonData::fromArray($request->validated());
+        $dto = PersonDTO::fromArray($request->validated());
 
         $person->update([
-            'name' => $data->name,
-            'email' => $data->email,
-            'phone' => $data->phone,
-            'birthday' => $data->birthday,
-            'birthday_reminder' => $data->birthdayReminder,
-            'reminder_days_before' => $data->reminderDaysBefore,
-            'notes' => $data->notes,
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'phone' => $dto->phone,
+            'birthday' => $dto->birthday,
+            'birthday_reminder' => $dto->birthdayReminder,
+            'reminder_days_before' => $dto->reminderDaysBefore,
+            'notes' => $dto->notes,
         ]);
 
-        if ($data->tagIds !== null) {
-            $person->syncTags($data->tagIds);
+        if ($dto->tagIds !== null) {
+            $person->syncTags($dto->tagIds);
         }
 
         if ($request->wantsJson()) {

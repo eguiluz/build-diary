@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Project;
 
-use App\Data\ProjectData;
+use App\DTO\ProjectDTO;
 use App\Models\Project;
 use App\Models\ProjectStatus;
 use App\Models\User;
@@ -12,24 +12,24 @@ use Illuminate\Support\Str;
 
 final class CreateProjectAction
 {
-    public function execute(User $user, ProjectData $data): Project
+    public function execute(User $user, ProjectDTO $dto): Project
     {
         $project = new Project;
         $project->user_id = $user->id;
-        $project->status_id = $data->statusId ?? $this->getDefaultStatusId();
-        $project->person_id = $data->personId;
-        $project->title = $data->title;
-        $project->slug = $this->generateUniqueSlug($user, $data->title);
-        $project->description = $data->description;
-        $project->category_id = $data->categoryId;
-        $project->due_date = $data->dueDate;
-        $project->started_at = $data->startedAt;
-        $project->priority = $data->priority ?? 0;
-        $project->metadata = $data->metadata;
+        $project->status_id = $dto->statusId ?? $this->getDefaultStatusId();
+        $project->person_id = $dto->personId;
+        $project->title = $dto->title;
+        $project->slug = $this->generateUniqueSlug($user, $dto->title);
+        $project->description = $dto->description;
+        $project->category_id = $dto->categoryId;
+        $project->due_date = $dto->dueDate;
+        $project->started_at = $dto->startedAt;
+        $project->priority = $dto->priority ?? 0;
+        $project->metadata = $dto->metadata;
         $project->save();
 
-        if (! empty($data->tagIds)) {
-            $project->syncTags($data->tagIds);
+        if (! empty($dto->tagIds)) {
+            $project->syncTags($dto->tagIds);
         }
 
         return $project->load(['status', 'person', 'tags']);

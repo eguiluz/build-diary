@@ -108,34 +108,34 @@ class DemoCalendarEventsSeeder extends Seeder
         ];
 
         $count = 0;
-        foreach ($events as $eventData) {
+        foreach ($events as $eventDTO) {
             $projectId = null;
-            if (! empty($eventData['project_slug']) && isset($projects[$eventData['project_slug']])) {
-                $projectId = $projects[$eventData['project_slug']];
+            if (! empty($eventDTO['project_slug']) && isset($projects[$eventDTO['project_slug']])) {
+                $projectId = $projects[$eventDTO['project_slug']];
             }
 
             $personId = null;
-            if (! empty($eventData['person_name']) && isset($people[$eventData['person_name']])) {
-                $personId = $people[$eventData['person_name']]->id;
+            if (! empty($eventDTO['person_name']) && isset($people[$eventDTO['person_name']])) {
+                $personId = $people[$eventDTO['person_name']]->id;
             }
 
             CalendarEvent::firstOrCreate(
                 [
-                    'title' => $eventData['title'],
+                    'title' => $eventDTO['title'],
                     'user_id' => $user->id,
-                    'event_date' => $eventData['event_date'],
+                    'event_date' => $eventDTO['event_date'],
                 ],
                 [
-                    'title' => $eventData['title'],
-                    'description' => $eventData['description'] ?? null,
-                    'type' => $eventData['type'],
-                    'event_date' => $eventData['event_date'],
-                    'event_time' => $eventData['event_time'] ?? null,
-                    'is_all_day' => $eventData['is_all_day'],
+                    'title' => $eventDTO['title'],
+                    'description' => $eventDTO['description'] ?? null,
+                    'type' => $eventDTO['type'],
+                    'event_date' => $eventDTO['event_date'],
+                    'event_time' => $eventDTO['event_time'] ?? null,
+                    'is_all_day' => $eventDTO['is_all_day'],
                     'is_recurring' => false,
-                    'color' => $eventData['color'] ?? null,
-                    'reminder_enabled' => $eventData['reminder_enabled'] ?? false,
-                    'reminder_minutes_before' => $eventData['reminder_minutes_before'] ?? null,
+                    'color' => $eventDTO['color'] ?? null,
+                    'reminder_enabled' => $eventDTO['reminder_enabled'] ?? false,
+                    'reminder_minutes_before' => $eventDTO['reminder_minutes_before'] ?? null,
                     'project_id' => $projectId,
                     'person_id' => $personId,
                     'user_id' => $user->id,

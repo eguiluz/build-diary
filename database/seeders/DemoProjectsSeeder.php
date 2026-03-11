@@ -158,38 +158,39 @@ class DemoProjectsSeeder extends Seeder
         ];
 
         $count = 0;
-        foreach ($projects as $projectData) {
+
+        foreach ($projects as $projectDTO) {
             $personId = null;
-            if (! empty($projectData['person_name']) && isset($people[$projectData['person_name']])) {
-                $personId = $people[$projectData['person_name']];
+            if (! empty($projectDTO['person_name']) && isset($people[$projectDTO['person_name']])) {
+                $personId = $people[$projectDTO['person_name']];
             }
 
-            $statusId = $statuses[$projectData['status_slug']] ?? $statuses['idea'] ?? 1;
-            $categorySlug = str_replace('_', '-', $projectData['category'] ?? '');
+            $statusId = $statuses[$projectDTO['status_slug']] ?? $statuses['idea'] ?? 1;
+            $categorySlug = str_replace('_', '-', $projectDTO['category'] ?? '');
             $categoryId = $categories[$categorySlug] ?? null;
 
             $project = Project::updateOrCreate(
-                ['slug' => Str::slug($projectData['title']), 'user_id' => $user->id],
+                ['slug' => Str::slug($projectDTO['title']), 'user_id' => $user->id],
                 [
-                    'title' => $projectData['title'],
-                    'slug' => Str::slug($projectData['title']),
-                    'description' => $projectData['description'],
+                    'title' => $projectDTO['title'],
+                    'slug' => Str::slug($projectDTO['title']),
+                    'description' => $projectDTO['description'],
                     'category_id' => $categoryId,
                     'status_id' => $statusId,
-                    'priority' => $projectData['priority'],
-                    'due_date' => $projectData['due_date'] ?? null,
-                    'started_at' => $projectData['started_at'] ?? null,
-                    'completed_at' => $projectData['completed_at'] ?? null,
+                    'priority' => $projectDTO['priority'],
+                    'due_date' => $projectDTO['due_date'] ?? null,
+                    'started_at' => $projectDTO['started_at'] ?? null,
+                    'completed_at' => $projectDTO['completed_at'] ?? null,
                     'person_id' => $personId,
                     'user_id' => $user->id,
                     'is_archived' => false,
-                    'is_public' => $projectData['is_public'] ?? false,
+                    'is_public' => $projectDTO['is_public'] ?? false,
                 ]
             );
 
             // Entradas de diario
-            if (! empty($projectData['diary_entries'])) {
-                foreach ($projectData['diary_entries'] as $index => $entry) {
+            if (! empty($projectDTO['diary_entries'])) {
+                foreach ($projectDTO['diary_entries'] as $index => $entry) {
                     DiaryEntry::firstOrCreate(
                         [
                             'project_id' => $project->id,
@@ -200,7 +201,7 @@ class DemoProjectsSeeder extends Seeder
                             'title' => $entry['title'] ?? null,
                             'content' => $entry['content'],
                             'type' => $entry['type'],
-                            'entry_date' => now()->subDays(count($projectData['diary_entries']) - $index),
+                            'entry_date' => now()->subDays(count($projectDTO['diary_entries']) - $index),
                             'time_spent_minutes' => $entry['time_spent'],
                         ]
                     );
@@ -208,8 +209,8 @@ class DemoProjectsSeeder extends Seeder
             }
 
             // Enlaces
-            if (! empty($projectData['links'])) {
-                foreach ($projectData['links'] as $link) {
+            if (! empty($projectDTO['links'])) {
+                foreach ($projectDTO['links'] as $link) {
                     ProjectLink::firstOrCreate(
                         [
                             'project_id' => $project->id,

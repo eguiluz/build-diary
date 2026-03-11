@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Data\ProjectData;
+use App\DTO\ProjectDTO;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Models\Project;
@@ -76,7 +76,7 @@ final class ProjectController extends Controller
 
         $project = $this->createAction->execute(
             $request->user(),
-            ProjectData::fromArray($request->validated())
+            ProjectDTO::fromArray($request->validated())
         );
 
         if ($request->wantsJson()) {
@@ -103,7 +103,7 @@ final class ProjectController extends Controller
 
         $project = $this->updateAction->execute(
             $project,
-            ProjectData::fromArray($request->validated())
+            ProjectDTO::fromArray($request->validated())
         );
 
         if ($request->wantsJson()) {

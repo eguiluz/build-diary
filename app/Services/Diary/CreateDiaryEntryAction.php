@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Services\Diary;
 
-use App\Data\DiaryEntryData;
+use App\DTO\DiaryEntryDTO;
 use App\Models\DiaryEntry;
 use App\Models\Project;
 
 final class CreateDiaryEntryAction
 {
-    public function execute(Project $project, DiaryEntryData $data): DiaryEntry
+    public function execute(Project $project, DiaryEntryDTO $dto): DiaryEntry
     {
         return DiaryEntry::create([
             'project_id' => $project->id,
-            'title' => $data->title,
-            'content' => $data->content,
-            'type' => $data->type,
-            'entry_date' => $data->entryDate ?? now()->toDateString(),
-            'entry_time' => $data->entryTime,
-            'time_spent_minutes' => $data->timeSpentMinutes,
-            'metadata' => $data->metadata,
+            'title' => $dto->title,
+            'content' => $dto->content,
+            'type' => $dto->type,
+            'entry_date' => $dto->entryDate ?? now()->toDateString(),
+            'entry_time' => $dto->entryTime,
+            'time_spent_minutes' => $dto->timeSpentMinutes,
+            'metadata' => $dto->metadata,
         ]);
     }
 }

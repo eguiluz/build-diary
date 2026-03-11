@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Data;
+namespace App\DTO;
 
 use Carbon\Carbon;
 
-final readonly class PersonData
+final readonly class PersonDTO
 {
     /**
      * @param  array<int>|null  $tagIds

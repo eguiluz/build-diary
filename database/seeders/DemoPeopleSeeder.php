@@ -68,10 +68,10 @@ class DemoPeopleSeeder extends Seeder
             ],
         ];
 
-        foreach ($people as $personData) {
+        foreach ($people as $personDTO) {
             Person::firstOrCreate(
-                ['email' => $personData['email'], 'user_id' => $user->id],
-                array_merge($personData, ['user_id' => $user->id])
+                ['email' => $personDTO['email'], 'user_id' => $user->id],
+                array_merge($personDTO, ['user_id' => $user->id])
             );
         }
 

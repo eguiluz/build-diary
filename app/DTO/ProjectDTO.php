@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Data;
+namespace App\DTO;
 
 use Carbon\Carbon;
 
-final readonly class ProjectData
+final readonly class ProjectDTO
 {
     /**
      * @param  array<string, mixed>|null  $metadata

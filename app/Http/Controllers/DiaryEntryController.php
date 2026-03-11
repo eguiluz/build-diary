@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Data\DiaryEntryData;
+use App\DTO\DiaryEntryDTO;
 use App\Http\Requests\Diary\StoreDiaryEntryRequest;
 use App\Http\Requests\Diary\UpdateDiaryEntryRequest;
 use App\Models\DiaryEntry;
@@ -46,7 +46,7 @@ final class DiaryEntryController extends Controller
 
         $entry = $this->createAction->execute(
             $project,
-            DiaryEntryData::fromArray($request->validated())
+            DiaryEntryDTO::fromArray($request->validated())
         );
 
         if ($request->wantsJson()) {
@@ -69,7 +69,7 @@ final class DiaryEntryController extends Controller
 
         $entry = $this->updateAction->execute(
             $entry,
-            DiaryEntryData::fromArray($request->validated())
+            DiaryEntryDTO::fromArray($request->validated())
         );
 
         if ($request->wantsJson()) {

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Services\Diary;
 
-use App\Data\DiaryEntryData;
+use App\DTO\DiaryEntryDTO;
 use App\Models\DiaryEntry;
 
 final class UpdateDiaryEntryAction
 {
-    public function execute(DiaryEntry $entry, DiaryEntryData $data): DiaryEntry
+    public function execute(DiaryEntry $entry, DiaryEntryDTO $dto): DiaryEntry
     {
         $entry->update([
-            'title' => $data->title,
-            'content' => $data->content,
-            'type' => $data->type,
-            'entry_date' => $data->entryDate ?? $entry->entry_date,
-            'entry_time' => $data->entryTime,
-            'time_spent_minutes' => $data->timeSpentMinutes,
-            'metadata' => $data->metadata,
+            'title' => $dto->title,
+            'content' => $dto->content,
+            'type' => $dto->type,
+            'entry_date' => $dto->entryDate ?? $entry->entry_date,
+            'entry_time' => $dto->entryTime,
+            'time_spent_minutes' => $dto->timeSpentMinutes,
+            'metadata' => $dto->metadata,
         ]);
 
         return $entry->fresh();

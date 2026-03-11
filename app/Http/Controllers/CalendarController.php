@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Data\CalendarEventData;
+use App\DTO\CalendarEventDTO;
 use App\Http\Requests\Calendar\StoreCalendarEventRequest;
 use App\Models\CalendarEvent;
 use App\Services\Calendar\CalendarService;
@@ -53,24 +53,24 @@ final class CalendarController extends Controller
     {
         $this->authorize('create', CalendarEvent::class);
 
-        $data = CalendarEventData::fromArray($request->validated());
+        $dto = CalendarEventDTO::fromArray($request->validated());
 
         $event = CalendarEvent::create([
             'user_id' => $request->user()->id,
-            'project_id' => $data->projectId,
-            'person_id' => $data->personId,
-            'title' => $data->title,
-            'description' => $data->description,
-            'type' => $data->type,
-            'event_date' => $data->eventDate,
-            'event_time' => $data->eventTime,
-            'end_date' => $data->endDate,
-            'is_all_day' => $data->isAllDay,
-            'is_recurring' => $data->isRecurring,
-            'recurrence_rule' => $data->recurrenceRule,
-            'color' => $data->color,
-            'reminder_enabled' => $data->reminderEnabled,
-            'reminder_minutes_before' => $data->reminderMinutesBefore,
+            'project_id' => $dto->projectId,
+            'person_id' => $dto->personId,
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'type' => $dto->type,
+            'event_date' => $dto->eventDate,
+            'event_time' => $dto->eventTime,
+            'end_date' => $dto->endDate,
+            'is_all_day' => $dto->isAllDay,
+            'is_recurring' => $dto->isRecurring,
+            'recurrence_rule' => $dto->recurrenceRule,
+            'color' => $dto->color,
+            'reminder_enabled' => $dto->reminderEnabled,
+            'reminder_minutes_before' => $dto->reminderMinutesBefore,
         ]);
 
         if ($request->wantsJson()) {
@@ -93,23 +93,23 @@ final class CalendarController extends Controller
     {
         $this->authorize('update', $event);
 
-        $data = CalendarEventData::fromArray($request->validated());
+        $dto = CalendarEventDTO::fromArray($request->validated());
 
         $event->update([
-            'project_id' => $data->projectId,
-            'person_id' => $data->personId,
-            'title' => $data->title,
-            'description' => $data->description,
-            'type' => $data->type,
-            'event_date' => $data->eventDate,
-            'event_time' => $data->eventTime,
-            'end_date' => $data->endDate,
-            'is_all_day' => $data->isAllDay,
-            'is_recurring' => $data->isRecurring,
-            'recurrence_rule' => $data->recurrenceRule,
-            'color' => $data->color,
-            'reminder_enabled' => $data->reminderEnabled,
-            'reminder_minutes_before' => $data->reminderMinutesBefore,
+            'project_id' => $dto->projectId,
+            'person_id' => $dto->personId,
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'type' => $dto->type,
+            'event_date' => $dto->eventDate,
+            'event_time' => $dto->eventTime,
+            'end_date' => $dto->endDate,
+            'is_all_day' => $dto->isAllDay,
+            'is_recurring' => $dto->isRecurring,
+            'recurrence_rule' => $dto->recurrenceRule,
+            'color' => $dto->color,
+            'reminder_enabled' => $dto->reminderEnabled,
+            'reminder_minutes_before' => $dto->reminderMinutesBefore,
         ]);
 
         if ($request->wantsJson()) {

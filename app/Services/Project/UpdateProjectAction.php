@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace App\Services\Project;
 
-use App\Data\ProjectData;
+use App\DTO\ProjectDTO;
 use App\Models\Project;
 use Illuminate\Support\Str;
 
 final class UpdateProjectAction
 {
-    public function execute(Project $project, ProjectData $data): Project
+    public function execute(Project $project, ProjectDTO $dto): Project
     {
-        if ($data->title !== $project->title) {
-            $project->slug = $this->generateUniqueSlug($project, $data->title);
+        if ($dto->title !== $project->title) {
+            $project->slug = $this->generateUniqueSlug($project, $dto->title);
         }
 
-        $project->status_id = $data->statusId ?? $project->status_id;
-        $project->person_id = $data->personId;
-        $project->title = $data->title;
-        $project->description = $data->description;
-        $project->category_id = $data->categoryId;
-        $project->due_date = $data->dueDate;
-        $project->started_at = $data->startedAt;
-        $project->priority = $data->priority ?? $project->priority;
-        $project->metadata = $data->metadata;
+        $project->status_id = $dto->statusId ?? $project->status_id;
+        $project->person_id = $dto->personId;
+        $project->title = $dto->title;
+        $project->description = $dto->description;
+        $project->category_id = $dto->categoryId;
+        $project->due_date = $dto->dueDate;
+        $project->started_at = $dto->startedAt;
+        $project->priority = $dto->priority ?? $project->priority;
+        $project->metadata = $dto->metadata;
 
         if ($this->isBeingCompleted($project)) {
             $project->completed_at = now();
@@ -34,8 +34,8 @@ final class UpdateProjectAction
 
         $project->save();
 
-        if ($data->tagIds !== null) {
-            $project->syncTags($data->tagIds);
+        if ($dto->tagIds !== null) {
+            $project->syncTags($dto->tagIds);
         }
 
         return $project->load(['status', 'person', 'tags']);

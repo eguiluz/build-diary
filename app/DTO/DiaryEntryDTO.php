@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Data;
+namespace App\DTO;
 
 use Carbon\Carbon;
 
-final readonly class DiaryEntryData
+final readonly class DiaryEntryDTO
 {
     /**
      * @param  array<string, mixed>|null  $metadata
