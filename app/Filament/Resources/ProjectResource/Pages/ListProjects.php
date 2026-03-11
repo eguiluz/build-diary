@@ -14,6 +14,11 @@ class ListProjects extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('import-project')
+                ->label('Importar proyecto')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->color('primary')
+                ->url(fn () => route('filament.admin.pages.import-project')),
         ];
     }
 }

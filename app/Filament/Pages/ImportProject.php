@@ -22,17 +22,14 @@ class ImportProject extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-up-tray';
-
-    protected static ?string $navigationLabel = 'Importar proyecto';
-
     protected static ?string $title = 'Importar proyecto';
 
-    protected static ?string $navigationGroup = 'Proyectos';
-
-    protected static ?int $navigationSort = 10;
-
     protected static string $view = 'filament.pages.import-project';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     /**
      * @var array<string, mixed>
