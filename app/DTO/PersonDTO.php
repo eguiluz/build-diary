@@ -23,7 +23,16 @@ final readonly class PersonDTO
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array{
+     *   name: string,
+     *   email?: string|null,
+     *   phone?: string|null,
+     *   birthday?: string|null,
+     *   birthday_reminder?: bool,
+     *   reminder_days_before?: int,
+     *   notes?: string|null,
+     *   tag_ids?: array<int>|null
+     * } $data
      */
     public static function fromArray(array $data): self
     {

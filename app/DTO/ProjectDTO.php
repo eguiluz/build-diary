@@ -26,7 +26,18 @@ final readonly class ProjectDTO
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array{
+     *   title: string,
+     *   description?: string|null,
+     *   status_id?: int|null,
+     *   person_id?: int|null,
+     *   category_id?: int|null,
+     *   due_date?: Carbon|string|null,
+     *   started_at?: Carbon|string|null,
+     *   priority?: int|null,
+     *   metadata?: array<string, mixed>|null,
+     *   tag_ids?: array<int>|null
+     * } $data
      */
     public static function fromArray(array $data): self
     {

@@ -26,7 +26,22 @@ final readonly class CalendarEventDTO
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array{
+     *   title: string,
+     *   type: string,
+     *   event_date: string,
+     *   description?: string|null,
+     *   project_id?: int|null,
+     *   person_id?: int|null,
+     *   event_time?: string|null,
+     *   end_date?: string|null,
+     *   is_all_day?: bool,
+     *   is_recurring?: bool,
+     *   recurrence_rule?: string|null,
+     *   color?: string|null,
+     *   reminder_enabled?: bool,
+     *   reminder_minutes_before?: int|null
+     * } $data
      */
     public static function fromArray(array $data): self
     {

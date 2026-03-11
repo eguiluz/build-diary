@@ -22,7 +22,15 @@ final readonly class DiaryEntryDTO
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array{
+     *   content: string,
+     *   title?: string|null,
+     *   type?: string,
+     *   entry_date?: string|null,
+     *   entry_time?: string|null,
+     *   time_spent_minutes?: int|null,
+     *   metadata?: array<string, mixed>|null,
+     * } $data
      */
     public static function fromArray(array $data): self
     {
