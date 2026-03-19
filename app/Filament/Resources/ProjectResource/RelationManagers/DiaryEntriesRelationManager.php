@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use App\Models\DiaryEntry;
@@ -8,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class DiaryEntriesRelationManager extends RelationManager
 {
@@ -43,6 +46,20 @@ class DiaryEntriesRelationManager extends RelationManager
                     ->numeric()
                     ->minValue(0)
                     ->step(5),
+                Forms\Components\FileUpload::make('images')
+                    ->label('Imágenes')
+                    ->multiple()
+                    ->image()
+                    ->imagePreviewHeight('120')
+                    ->directory('diary-entry-images')
+                    ->disk('public')
+                    ->reorderable()
+                    ->afterStateHydrated(function (Forms\Components\FileUpload $component, ?DiaryEntry $record): void {
+                        if ($record instanceof DiaryEntry) {
+                            $component->state($record->images->pluck('path')->toArray());
+                        }
+                    })
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -76,15 +93,62 @@ class DiaryEntriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('time_spent_minutes')
                     ->label('Tiempo')
                     ->formatStateUsing(fn ($state) => $state ? floor($state / 60).'h '.($state % 60).'m' : '-'),
+                Tables\Columns\TextColumn::make('images_count')
+                    ->label('Imágenes')
+                    ->counts('images')
+                    ->badge()
+                    ->color('gray'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->using(function (array $data, Table $table): Model {
+                        /** @var array<int, string> $images */
+                        $images = $data['images'] ?? [];
+
+                        $relationship = $table->getRelationship();
+                        $record = new DiaryEntry;
+                        $record->fill($data);
+                        /** @phpstan-ignore-next-line */
+                        $relationship->save($record);
+
+                        foreach ($images as $index => $path) {
+                            $record->images()->create([
+                                'path' => $path,
+                                'disk' => 'public',
+                                'original_name' => basename((string) $path),
+                                'order' => $index,
+                            ]);
+                        }
+
+                        return $record;
+                    }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->using(function (array $data, DiaryEntry $record): DiaryEntry {
+                        /** @var array<int, string> $images */
+                        $images = $data['images'] ?? [];
+
+                        $record->update($data);
+
+                        $newPaths = collect($images);
+                        $record->images()->whereNotIn('path', $newPaths->toArray())->delete();
+
+                        $existingPaths = $record->images()->pluck('path');
+                        foreach ($newPaths->diff($existingPaths) as $index => $path) {
+                            $record->images()->create([
+                                'path' => $path,
+                                'disk' => 'public',
+                                'original_name' => basename((string) $path),
+                                'order' => $index,
+                            ]);
+                        }
+
+                        return $record;
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

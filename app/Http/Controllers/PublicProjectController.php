@@ -99,6 +99,18 @@ final class PublicProjectController extends Controller
             }
         }
 
+        // Add diary entry images
+        foreach ($project->diaryEntries as $entry) {
+            foreach ($entry->images as $imageIndex => $image) {
+                $imagePath = Storage::disk($image->disk)->path($image->path);
+                if (file_exists($imagePath)) {
+                    $extension = pathinfo($image->original_name, PATHINFO_EXTENSION);
+                    $baseName = $entry->entry_date->format('Y-m-d').'_'.($imageIndex + 1).'.'.$extension;
+                    $zip->addFile($imagePath, 'diario/'.$baseName);
+                }
+            }
+        }
+
         // Generate and add PDF
         $pdf = Pdf::loadView('public.projects.pdf', compact('project'))
             ->setPaper('a4')
@@ -127,7 +139,7 @@ final class PublicProjectController extends Controller
                 'tasks' => fn ($q) => $q->orderBy('order'),
                 'expenses' => fn ($q) => $q->orderBy('category')->orderBy('name'),
                 'links' => fn ($q) => $q->orderBy('order'),
-                'diaryEntries' => fn ($q) => $q->latest('entry_date')->limit(10),
+                'diaryEntries' => fn ($q) => $q->latest('entry_date')->limit(10)->with('images'),
             ])
             ->firstOrFail();
     }

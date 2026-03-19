@@ -552,6 +552,17 @@
                                                 {!! $entry->content !!}
                                             </div>
 
+                                            <!-- Images -->
+                                            @if ($entry->images->count() > 0)
+                                                <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                                    @foreach ($entry->images as $image)
+                                                        <a href="{{ $image->url }}" target="_blank" class="block overflow-hidden rounded-lg">
+                                                            <img src="{{ $image->url }}" alt="{{ $image->caption ?? $image->original_name }}" loading="lazy" class="h-32 w-full object-cover transition-transform duration-300 hover:scale-105">
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
                                             <!-- Footer: Time spent -->
                                             @if ($entry->time_spent_minutes)
                                                 <div class="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">

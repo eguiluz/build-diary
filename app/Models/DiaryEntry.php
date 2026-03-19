@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read Project $project
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, DiaryEntryImage> $images
  */
 final class DiaryEntry extends Model
 {
@@ -65,6 +67,14 @@ final class DiaryEntry extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * @return HasMany<DiaryEntryImage, $this>
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(DiaryEntryImage::class)->orderBy('order');
     }
 
     /**

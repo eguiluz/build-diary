@@ -737,6 +737,24 @@
                             {!! $entry->content !!}
                         </div>
 
+                        @if ($entry->images->count() > 0)
+                            @php $imgCount = min($entry->images->count(), 3); @endphp
+                            <div style="margin-top: 10px;">
+                                <table style="width: {{ $imgCount * 33 }}%; border-collapse: collapse;">
+                                    <tr>
+                                        @foreach ($entry->images->take(3) as $image)
+                                            <td style="width: 33%; padding: 4px; vertical-align: top;">
+                                                <img src="{{ Storage::disk($image->disk)->path($image->path) }}" style="width: 100%; height: auto; border-radius: 4px; border: 1px solid #e2e8f0;" alt="{{ $image->caption ?? $image->original_name }}">
+                                                @if ($image->caption)
+                                                    <div style="font-size: 9px; color: #64748b; text-align: center; margin-top: 3px;">{{ $image->caption }}</div>
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+
                         @if ($entry->time_spent_minutes)
                             <div class="entry-time">
                                 ⏱️ {{ __('app.public.time_dedicated', ['hours' => floor($entry->time_spent_minutes / 60), 'minutes' => $entry->time_spent_minutes % 60]) }}
