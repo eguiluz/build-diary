@@ -25,7 +25,7 @@ class Calendar extends Page
 
     protected static ?string $title = 'Calendario';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 2;
 
     protected function getHeaderWidgets(): array
     {

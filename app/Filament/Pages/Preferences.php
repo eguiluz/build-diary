@@ -22,7 +22,7 @@ class Preferences extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 33;
 
     protected static string $view = 'filament.pages.preferences';
 

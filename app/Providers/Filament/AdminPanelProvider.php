@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -65,10 +66,10 @@ class AdminPanelProvider extends PanelProvider
                 BLADE)
             )
             ->navigationGroups([
-                'Proyectos',
-                'Personas',
-                'Taller',
-                'Configuración',
+                NavigationGroup::make(__('app.navigation.projects')),
+                NavigationGroup::make(__('app.navigation.workshop')),
+                NavigationGroup::make(__('app.navigation.people')),
+                NavigationGroup::make(__('app.navigation.settings')),
             ])
             ->plugins([
                 FilamentFullCalendarPlugin::make()

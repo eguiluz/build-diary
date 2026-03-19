@@ -28,7 +28,7 @@ class ProjectCategoryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Categorías de proyecto';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 30;
 
     public static function form(Form $form): Form
     {

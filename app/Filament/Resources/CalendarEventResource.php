@@ -17,7 +17,7 @@ class CalendarEventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {
