@@ -5,12 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Proyectos de {{ $user->name }} - {{ config('app.name', 'Build Diary') }}</title>
-    <meta name="description" content="Galería de proyectos públicos de {{ $user->name }}">
+    <title>{{ __('app.public.projects_of', ['name' => $user->name]) }} - {{ config('app.name', 'Build Diary') }}</title>
+    <meta name="description" content="{{ __('app.public.gallery_meta_description', ['name' => $user->name]) }}">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Proyectos de {{ $user->name }}">
-    <meta property="og:description" content="Galería de proyectos públicos de {{ $user->name }}">
+    <meta property="og:title" content="{{ __('app.public.projects_of', ['name' => $user->name]) }}">
+    <meta property="og:description" content="{{ __('app.public.gallery_meta_description', ['name' => $user->name]) }}">
     <meta property="og:type" content="website">
 
     @include('partials.favicon')
@@ -36,7 +36,7 @@
                 </a>
 
                 <a class="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" href="{{ url('/') }}">
-                    ← Volver al inicio
+                    {{ __('app.public.back_to_home') }}
                 </a>
             </div>
         </nav>
@@ -49,10 +49,10 @@
                 {{ strtoupper(substr($user->name, 0, 1)) }}
             </div>
             <h1 class="mb-2 text-3xl font-bold text-slate-900 dark:text-white">
-                Proyectos de {{ $user->name }}
+                {{ __('app.public.projects_of', ['name' => $user->name]) }}
             </h1>
             <p class="text-slate-500 dark:text-slate-400">
-                {{ $projects->count() }} {{ $projects->count() === 1 ? 'proyecto público' : 'proyectos públicos' }}
+                {{ trans_choice('app.public.public_projects_count', $projects->count(), ['count' => $projects->count()]) }}
             </p>
         </div>
 
@@ -138,9 +138,9 @@
                 <svg class="mx-auto h-16 w-16 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <h3 class="mt-4 text-lg font-semibold text-slate-900 dark:text-white">Sin proyectos públicos</h3>
+                <h3 class="mt-4 text-lg font-semibold text-slate-900 dark:text-white">{{ __('app.public.no_public_projects') }}</h3>
                 <p class="mt-1 text-slate-500 dark:text-slate-400">
-                    Este usuario aún no tiene proyectos públicos.
+                    {{ __('app.public.no_public_projects_desc') }}
                 </p>
             </div>
         @endif
@@ -152,7 +152,7 @@
             <a class="transition-colors hover:text-amber-500" href="{{ url('/') }}">
                 Build Diary
             </a>
-            · Documenta tus proyectos paso a paso
+            · {{ __('app.public.tagline') }}
         </div>
     </footer>
 </body>

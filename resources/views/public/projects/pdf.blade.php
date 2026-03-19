@@ -489,9 +489,9 @@
                     default => '#64748b',
                 };
                 $priorityLabel = match ($project->priority) {
-                    1 => 'Prioridad baja',
-                    2 => 'Prioridad media',
-                    3 => 'Prioridad alta',
+                    1 => __('app.public.priority_low'),
+                    2 => __('app.public.priority_medium'),
+                    3 => __('app.public.priority_high'),
                     default => '',
                 };
             @endphp
@@ -543,7 +543,7 @@
 
     @if ($project->description)
         <div class="section">
-            <h2 class="section-title">Descripción</h2>
+            <h2 class="section-title">{{ __('app.public.description') }}</h2>
             <div class="description">
                 {!! Str::markdown($project->description, ['renderer' => ['soft_break' => "<br>\n"]]) !!}
             </div>
@@ -613,10 +613,10 @@
                 <thead>
                     <tr>
                         <th style="width: 5%;"></th>
-                        <th style="width: 35%;">Material</th>
-                        <th style="width: 20%;">Categoría</th>
-                        <th style="width: 20%;">Cantidad</th>
-                        <th class="text-right" style="width: 20%;">Total</th>
+                        <th style="width: 35%;">{{ __('app.public.expense_item') }}</th>
+                        <th style="width: 20%;">{{ __('app.public.expense_category_header') }}</th>
+                        <th style="width: 20%;">{{ __('app.public.expense_quantity') }}</th>
+                        <th class="text-right" style="width: 20%;">{{ __('app.public.total') }}</th>
                     </tr>
                 </thead>
                 <tbody>
