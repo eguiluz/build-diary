@@ -20,6 +20,10 @@ class DiaryEntriesRelationManager extends RelationManager
 
     protected static ?string $icon = 'heroicon-o-book-open';
 
+    protected static ?string $modelLabel = 'entrada';
+
+    protected static ?string $pluralModelLabel = 'entradas';
+
     public function form(Form $form): Form
     {
         return $form
