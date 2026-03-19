@@ -19,6 +19,7 @@ return [
         'statuses' => 'Statuses',
         'settings' => 'Settings',
         'workshop' => 'Workshop',
+        'gallery' => 'Gallery',
     ],
 
     // Projects

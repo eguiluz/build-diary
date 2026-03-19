@@ -14,7 +14,10 @@ class Gallery extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
-    protected static ?string $navigationLabel = 'Galería';
+    public static function getNavigationLabel(): string
+    {
+        return __('app.navigation.gallery');
+    }
 
     protected static ?string $title = 'Galería de proyectos';
 

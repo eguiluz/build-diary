@@ -19,6 +19,7 @@ return [
         'statuses' => 'Estados',
         'settings' => 'Configuración',
         'workshop' => 'Taller',
+        'gallery' => 'Galería',
     ],
 
     // Projects

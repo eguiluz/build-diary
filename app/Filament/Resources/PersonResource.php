@@ -17,7 +17,10 @@ class PersonResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Personas';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.navigation.people');
+    }
 
     protected static ?string $modelLabel = 'Persona';
 

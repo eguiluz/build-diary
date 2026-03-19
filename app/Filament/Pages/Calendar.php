@@ -13,9 +13,15 @@ class Calendar extends Page
 
     protected static string $view = 'filament.pages.calendar';
 
-    protected static ?string $navigationGroup = 'Proyectos';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.navigation.projects');
+    }
 
-    protected static ?string $navigationLabel = 'Vista Calendario';
+    public static function getNavigationLabel(): string
+    {
+        return __('app.navigation.calendar');
+    }
 
     protected static ?string $title = 'Calendario';
 
