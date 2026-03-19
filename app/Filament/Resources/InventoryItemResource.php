@@ -22,88 +22,97 @@ class InventoryItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Taller';
-
-    protected static ?string $modelLabel = 'Artículo';
-
-    protected static ?string $pluralModelLabel = 'Inventario';
-
     protected static ?int $navigationSort = 20;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.navigation.workshop');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('app.inventory_item.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.inventory_item.plural');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Información básica')
+                Forms\Components\Section::make(__('app.inventory_item.section_basic'))
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Nombre')
+                            ->label(__('app.inventory_item.name'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
                         Forms\Components\Select::make('category')
-                            ->label('Categoría')
+                            ->label(__('app.inventory_item.category'))
                             ->options(InventoryItem::categories())
                             ->required()
                             ->native(false),
                         Forms\Components\Select::make('condition')
-                            ->label('Estado')
+                            ->label(__('app.inventory_item.condition'))
                             ->options(InventoryItem::conditions())
                             ->default('good')
                             ->required()
                             ->native(false),
                         Forms\Components\Textarea::make('description')
-                            ->label('Descripción')
+                            ->label(__('app.inventory_item.description'))
                             ->rows(3)
                             ->columnSpanFull(),
                     ])
                     ->columns(4),
 
-                Forms\Components\Section::make('Stock')
+                Forms\Components\Section::make(__('app.inventory_item.section_stock'))
                     ->schema([
                         Forms\Components\TextInput::make('quantity')
-                            ->label('Cantidad')
+                            ->label(__('app.inventory_item.quantity'))
                             ->numeric()
                             ->default(1)
                             ->minValue(0)
                             ->step(0.01)
                             ->required(),
                         Forms\Components\TextInput::make('unit')
-                            ->label('Unidad')
+                            ->label(__('app.inventory_item.unit'))
                             ->placeholder('uds, m, kg, l...')
                             ->maxLength(20),
                         Forms\Components\TextInput::make('min_quantity')
-                            ->label('Cantidad mínima')
+                            ->label(__('app.inventory_item.min_quantity'))
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
-                            ->helperText('Alerta cuando baje de este valor'),
+                            ->helperText(__('app.inventory_item.min_quantity_helper')),
                         Forms\Components\TextInput::make('location')
-                            ->label('Ubicación')
+                            ->label(__('app.inventory_item.location'))
                             ->placeholder('Estantería A, Cajón 3...')
                             ->maxLength(255),
                     ])
                     ->columns(4),
 
-                Forms\Components\Section::make('Detalles del producto')
+                Forms\Components\Section::make(__('app.inventory_item.section_details'))
                     ->schema([
                         Forms\Components\TextInput::make('brand')
-                            ->label('Marca')
+                            ->label(__('app.inventory_item.brand'))
                             ->maxLength(255),
                         Forms\Components\TextInput::make('model')
-                            ->label('Modelo')
+                            ->label(__('app.inventory_item.model_field'))
                             ->maxLength(255),
                         Forms\Components\TextInput::make('serial_number')
-                            ->label('Número de serie')
+                            ->label(__('app.inventory_item.serial_number'))
                             ->maxLength(255),
                         Forms\Components\TextInput::make('purchase_price')
-                            ->label('Precio de compra')
+                            ->label(__('app.inventory_item.purchase_price'))
                             ->numeric()
                             ->prefix('€'),
                         Forms\Components\DatePicker::make('purchase_date')
-                            ->label('Fecha de compra'),
+                            ->label(__('app.inventory_item.purchase_date')),
                         Forms\Components\FileUpload::make('image')
-                            ->label('Imagen')
+                            ->label(__('app.inventory_item.image'))
                             ->image()
                             ->directory('inventory')
                             ->maxSize(2048)
@@ -112,26 +121,26 @@ class InventoryItemResource extends Resource
                     ->columns(4)
                     ->collapsed(),
 
-                Forms\Components\Section::make('Préstamo')
+                Forms\Components\Section::make(__('app.inventory_item.section_loan'))
                     ->schema([
                         Forms\Components\Toggle::make('is_lent')
-                            ->label('Prestado')
+                            ->label(__('app.inventory_item.is_lent'))
                             ->reactive(),
                         Forms\Components\TextInput::make('lent_to')
-                            ->label('Prestado a')
+                            ->label(__('app.inventory_item.lent_to'))
                             ->maxLength(255)
                             ->visible(fn ($get) => $get('is_lent')),
                         Forms\Components\DatePicker::make('lent_at')
-                            ->label('Fecha de préstamo')
+                            ->label(__('app.inventory_item.lent_at'))
                             ->visible(fn ($get) => $get('is_lent')),
                     ])
                     ->columns(3)
                     ->collapsed(),
 
-                Forms\Components\Section::make('Notas')
+                Forms\Components\Section::make(__('app.inventory_item.section_notes'))
                     ->schema([
                         Forms\Components\Textarea::make('notes')
-                            ->label('Notas adicionales')
+                            ->label(__('app.inventory_item.notes'))
                             ->rows(3)
                             ->columnSpanFull(),
                     ])
@@ -149,12 +158,12 @@ class InventoryItemResource extends Resource
                     ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&background=f59e0b&color=fff')
                     ->size(40),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.inventory_item.name'))
                     ->searchable()
                     ->sortable()
                     ->description(fn ($record) => $record->brand ? "{$record->brand} {$record->model}" : null),
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Categoría')
+                    ->label(__('app.inventory_item.category'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => InventoryItem::categories()[$state] ?? $state)
                     ->color(fn ($state) => match ($state) {
@@ -166,14 +175,14 @@ class InventoryItemResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('quantity')
-                    ->label('Stock')
+                    ->label(__('app.inventory_item.stock_label'))
                     ->numeric(decimalPlaces: 0)
                     ->suffix(fn ($record) => $record->unit ? ' '.$record->unit : '')
                     ->color(fn ($record) => $record->isOutOfStock() ? 'danger' : ($record->isLowStock() ? 'warning' : null))
                     ->weight(fn ($record) => $record->isLowStock() ? 'bold' : null)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('condition')
-                    ->label('Estado')
+                    ->label(__('app.inventory_item.condition'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => InventoryItem::conditions()[$state] ?? $state)
                     ->color(fn ($state) => match ($state) {
@@ -185,11 +194,11 @@ class InventoryItemResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('location')
-                    ->label('Ubicación')
+                    ->label(__('app.inventory_item.location'))
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\IconColumn::make('is_lent')
-                    ->label('Prestado')
+                    ->label(__('app.inventory_item.is_lent'))
                     ->boolean()
                     ->trueIcon('heroicon-o-arrow-right-circle')
                     ->falseIcon('heroicon-o-check-circle')
@@ -197,25 +206,25 @@ class InventoryItemResource extends Resource
                     ->falseColor('success')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('purchase_price')
-                    ->label('Precio')
+                    ->label(__('app.inventory_item.price'))
                     ->money('EUR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->label('Categoría')
+                    ->label(__('app.inventory_item.category'))
                     ->options(InventoryItem::categories()),
                 Tables\Filters\SelectFilter::make('condition')
-                    ->label('Estado')
+                    ->label(__('app.inventory_item.condition'))
                     ->options(InventoryItem::conditions()),
                 Tables\Filters\TernaryFilter::make('is_lent')
-                    ->label('Préstamo')
-                    ->placeholder('Todos')
-                    ->trueLabel('Prestados')
-                    ->falseLabel('Disponibles'),
+                    ->label(__('app.inventory_item.loan_filter'))
+                    ->placeholder(__('app.inventory_item.filter_all'))
+                    ->trueLabel(__('app.inventory_item.filter_lent'))
+                    ->falseLabel(__('app.inventory_item.filter_available')),
                 Tables\Filters\Filter::make('low_stock')
-                    ->label('Stock bajo')
+                    ->label(__('app.inventory_item.low_stock_filter'))
                     ->query(fn (Builder $query) => $query->whereNotNull('min_quantity')
                         ->whereColumn('quantity', '<=', 'min_quantity')),
             ])
@@ -223,14 +232,14 @@ class InventoryItemResource extends Resource
                 Tables\Actions\Action::make('ajustar')
                     ->icon('heroicon-o-plus-circle')
                     ->color('success')
-                    ->label('Ajustar')
-                    ->tooltip('Ajustar stock')
+                    ->label(__('app.inventory_item.action_adjust'))
+                    ->tooltip(__('app.inventory_item.action_adjust_tooltip'))
                     ->form([
                         Forms\Components\TextInput::make('adjustment')
-                            ->label('Ajuste de cantidad')
+                            ->label(__('app.inventory_item.adjustment_field'))
                             ->numeric()
                             ->required()
-                            ->helperText('Use valores negativos para restar'),
+                            ->helperText(__('app.inventory_item.adjustment_helper')),
                     ])
                     ->action(function (InventoryItem $record, array $data): void {
                         $record->update([
@@ -240,25 +249,25 @@ class InventoryItemResource extends Resource
                 Tables\Actions\Action::make('prestar')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->color('warning')
-                    ->label('Prestar')
-                    ->tooltip('Prestar')
+                    ->label(__('app.inventory_item.action_lend'))
+                    ->tooltip(__('app.inventory_item.action_lend'))
                     ->visible(fn ($record) => ! $record->is_lent)
                     ->form([
                         Forms\Components\TextInput::make('borrower_name')
-                            ->label('Prestar a')
+                            ->label(__('app.inventory_item.borrower_name'))
                             ->required(),
                         Forms\Components\TextInput::make('borrower_contact')
-                            ->label('Contacto (teléfono, email...)')
+                            ->label(__('app.inventory_item.borrower_contact'))
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('expected_return_at')
-                            ->label('Devolución esperada'),
+                            ->label(__('app.inventory_item.expected_return')),
                         Forms\Components\Select::make('condition_at_loan')
-                            ->label('Estado actual del artículo')
+                            ->label(__('app.inventory_item.condition_at_loan'))
                             ->options(InventoryItem::conditions())
                             ->default(fn ($record) => $record->condition)
                             ->native(false),
                         Forms\Components\Textarea::make('notes')
-                            ->label('Notas')
+                            ->label(__('app.inventory_item.section_notes'))
                             ->rows(2),
                     ])
                     ->action(function (InventoryItem $record, array $data): void {
@@ -284,16 +293,16 @@ class InventoryItemResource extends Resource
                 Tables\Actions\Action::make('devolver')
                     ->icon('heroicon-o-arrow-left-circle')
                     ->color('success')
-                    ->label('Devolver')
-                    ->tooltip('Devolver')
+                    ->label(__('app.inventory_item.action_return'))
+                    ->tooltip(__('app.inventory_item.action_return'))
                     ->visible(fn ($record) => $record->is_lent)
                     ->form([
                         Forms\Components\Select::make('condition_at_return')
-                            ->label('Estado al devolver')
+                            ->label(__('app.inventory_item.condition_at_return'))
                             ->options(InventoryItem::conditions())
                             ->native(false),
                         Forms\Components\Textarea::make('return_notes')
-                            ->label('Notas de devolución')
+                            ->label(__('app.inventory_item.return_notes'))
                             ->rows(2),
                     ])
                     ->action(function (InventoryItem $record, array $data): void {
@@ -329,8 +338,8 @@ class InventoryItemResource extends Resource
                 ]),
             ])
             ->defaultSort('name')
-            ->emptyStateHeading('Sin artículos en inventario')
-            ->emptyStateDescription('Añade herramientas, materiales y equipos de tu taller.')
+            ->emptyStateHeading(__('app.inventory_item.empty_heading'))
+            ->emptyStateDescription(__('app.inventory_item.empty_desc'))
             ->emptyStateIcon('heroicon-o-wrench-screwdriver');
     }
 

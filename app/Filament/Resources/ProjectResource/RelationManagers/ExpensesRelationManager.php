@@ -16,30 +16,33 @@ class ExpensesRelationManager extends RelationManager
 {
     protected static string $relationship = 'expenses';
 
-    protected static ?string $title = 'Presupuesto';
-
     protected static ?string $icon = 'heroicon-o-currency-euro';
+
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return __('app.expense.section_title');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.expense.name'))
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('description')
-                    ->label('Descripción')
+                    ->label(__('app.expense.description'))
                     ->rows(2)
                     ->columnSpanFull(),
                 Forms\Components\Select::make('category')
-                    ->label('Categoría')
+                    ->label(__('app.expense.category'))
                     ->options(ProjectExpense::categories())
                     ->default('material')
                     ->required(),
                 Forms\Components\TextInput::make('quantity')
-                    ->label('Cantidad')
+                    ->label(__('app.expense.quantity'))
                     ->numeric()
                     ->default(1)
                     ->minValue(0.01)
@@ -48,11 +51,11 @@ class ExpensesRelationManager extends RelationManager
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn (Forms\Set $set, Forms\Get $get) => $set('calculated_total', $this->calculateTotal($get('quantity'), $get('unit_price')))),
                 Forms\Components\TextInput::make('unit')
-                    ->label('Unidad')
+                    ->label(__('app.expense.unit'))
                     ->placeholder('m, kg, uds, etc.')
                     ->maxLength(20),
                 Forms\Components\TextInput::make('unit_price')
-                    ->label('Precio unitario')
+                    ->label(__('app.expense.unit_price'))
                     ->numeric()
                     ->prefix('€')
                     ->step(0.01)
@@ -61,19 +64,19 @@ class ExpensesRelationManager extends RelationManager
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn (Forms\Set $set, Forms\Get $get) => $set('calculated_total', $this->calculateTotal($get('quantity'), $get('unit_price')))),
                 Forms\Components\Placeholder::make('calculated_total')
-                    ->label('Total estimado')
+                    ->label(__('app.expense.total_estimated'))
                     ->content(fn (Forms\Get $get): string => number_format((float) $get('quantity') * (float) $get('unit_price'), 2, ',', '.').' €'),
                 Forms\Components\TextInput::make('supplier')
-                    ->label('Proveedor')
+                    ->label(__('app.expense.supplier'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('url')
-                    ->label('Enlace')
+                    ->label(__('app.expense.link'))
                     ->url()
                     ->maxLength(2048),
                 Forms\Components\DatePicker::make('purchased_at')
-                    ->label('Fecha de compra'),
+                    ->label(__('app.expense.purchase_date')),
                 Forms\Components\Toggle::make('is_purchased')
-                    ->label('Comprado')
+                    ->label(__('app.expense.is_purchased'))
                     ->default(false),
             ])
             ->columns(2);
@@ -93,13 +96,13 @@ class ExpensesRelationManager extends RelationManager
                         ]);
                     }),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Material')
+                    ->label(__('app.expense.material'))
                     ->searchable()
                     ->description(fn ($record) => $record->description)
                     ->wrap()
                     ->extraAttributes(fn ($record) => $record->is_purchased ? ['class' => 'line-through opacity-60'] : []),
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Categoría')
+                    ->label(__('app.expense.category'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => ProjectExpense::categories()[$state] ?? $state)
                     ->color(fn ($state) => match ($state) {
@@ -110,49 +113,49 @@ class ExpensesRelationManager extends RelationManager
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('quantity')
-                    ->label('Cantidad')
+                    ->label(__('app.expense.quantity'))
                     ->numeric(decimalPlaces: 2)
                     ->suffix(fn ($record) => $record->unit ? ' '.$record->unit : ''),
                 Tables\Columns\TextColumn::make('unit_price')
-                    ->label('P. Unitario')
+                    ->label(__('app.expense.unit_price_short'))
                     ->numeric(decimalPlaces: 2)
                     ->suffix(' €'),
                 Tables\Columns\TextColumn::make('total_price')
-                    ->label('Total')
+                    ->label(__('app.public.total'))
                     ->numeric(decimalPlaces: 2)
                     ->suffix(' €')
                     ->weight('bold')
                     ->color(fn ($record) => $record->is_purchased ? 'success' : null)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->label('Total presupuesto')
+                            ->label(__('app.expense.total_budget_label'))
                             ->numeric(decimalPlaces: 2)
                             ->suffix(' €'),
                     ]),
                 Tables\Columns\TextColumn::make('supplier')
-                    ->label('Proveedor')
+                    ->label(__('app.expense.supplier'))
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->label('Categoría')
+                    ->label(__('app.expense.category'))
                     ->options(ProjectExpense::categories()),
                 Tables\Filters\TernaryFilter::make('is_purchased')
-                    ->label('Estado')
-                    ->placeholder('Todos')
-                    ->trueLabel('Comprados')
-                    ->falseLabel('Pendientes'),
+                    ->label(__('app.expense.status'))
+                    ->placeholder(__('app.expense.filter_all'))
+                    ->trueLabel(__('app.expense.purchased'))
+                    ->falseLabel(__('app.expense.pending_filter')),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Añadir gasto')
-                    ->modalHeading('Añadir material o gasto'),
+                    ->label(__('app.expense.add_expense'))
+                    ->modalHeading(__('app.expense.add_expense_heading')),
             ])
             ->actions([
                 Tables\Actions\Action::make('toggle')
                     ->icon(fn ($record) => $record->is_purchased ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                     ->color(fn ($record) => $record->is_purchased ? 'warning' : 'success')
-                    ->tooltip(fn ($record) => $record->is_purchased ? 'Marcar como pendiente' : 'Marcar como comprado')
+                    ->tooltip(fn ($record) => $record->is_purchased ? __('app.expense.mark_pending_tooltip') : __('app.expense.mark_purchased_tooltip'))
                     ->action(function ($record) {
                         $record->update([
                             'is_purchased' => ! $record->is_purchased,
@@ -164,20 +167,20 @@ class ExpensesRelationManager extends RelationManager
                     ->url(fn ($record) => $record->url)
                     ->openUrlInNewTab()
                     ->visible(fn ($record) => filled($record->url))
-                    ->tooltip('Abrir enlace'),
+                    ->tooltip(__('app.expense.open_link')),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('markPurchased')
-                        ->label('Marcar comprados')
+                        ->label(__('app.expense.bulk_mark_purchased'))
                         ->icon('heroicon-o-check')
                         ->color('success')
                         ->action(fn ($records) => $records->each(fn ($r) => $r->update(['is_purchased' => true, 'purchased_at' => now()])))
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('markPending')
-                        ->label('Marcar pendientes')
+                        ->label(__('app.expense.bulk_mark_pending'))
                         ->icon('heroicon-o-x-mark')
                         ->color('warning')
                         ->action(fn ($records) => $records->each(fn ($r) => $r->update(['is_purchased' => false, 'purchased_at' => null])))
@@ -185,8 +188,8 @@ class ExpensesRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('Sin gastos')
-            ->emptyStateDescription('Añade materiales y gastos para controlar el presupuesto del proyecto.')
+            ->emptyStateHeading(__('app.expense.empty_heading'))
+            ->emptyStateDescription(__('app.expense.empty_desc'))
             ->emptyStateIcon('heroicon-o-currency-euro')
             ->contentFooter(view('filament.resources.project-resource.expenses-footer', $this->getBudgetData()));
     }

@@ -15,7 +15,10 @@ class UpcomingBirthdays extends BaseWidget
 
     protected static ?int $sort = 3;
 
-    protected static ?string $heading = 'Próximos cumpleaños';
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return __('app.widgets.birthdays.heading');
+    }
 
     public function table(Table $table): Table
     {
@@ -40,9 +43,9 @@ class UpcomingBirthdays extends BaseWidget
             ->query(Person::query()->whereNotNull('birthday'))
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nombre'),
+                    ->label(__('app.person.name')),
                 TextColumn::make('birthday')
-                    ->label('Cumpleaños')
+                    ->label(__('app.person.birthday'))
                     ->date('d M'),
             ])
             ->paginated(false);

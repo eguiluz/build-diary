@@ -23,59 +23,68 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Proyectos';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.navigation.projects');
+    }
 
-    protected static ?string $modelLabel = 'Proyecto';
+    public static function getModelLabel(): string
+    {
+        return __('app.project.label');
+    }
 
-    protected static ?string $pluralModelLabel = 'Proyectos';
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.project.plural');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Información básica')
+                Forms\Components\Section::make(__('app.project.section_basic'))
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('Título')
+                            ->label(__('app.project.title'))
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('slug', Str::slug($state))),
                         Forms\Components\TextInput::make('slug')
-                            ->label('Slug')
+                            ->label(__('app.project.slug'))
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         Forms\Components\MarkdownEditor::make('description')
-                            ->label('Descripción')
+                            ->label(__('app.project.description'))
                             ->columnSpanFull(),
                         Forms\Components\Select::make('category_id')
-                            ->label('Categoría')
+                            ->label(__('app.project.category'))
                             ->relationship('category', 'name')
                             ->searchable()
                             ->preload(),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Estado y asignación')
+                Forms\Components\Section::make(__('app.project.section_status'))
                     ->schema([
                         Forms\Components\Select::make('status_id')
-                            ->label('Estado')
+                            ->label(__('app.project.status'))
                             ->relationship('status', 'name')
                             ->required()
                             ->preload(),
                         Forms\Components\Select::make('person_id')
-                            ->label('Persona asociada')
+                            ->label(__('app.project.person'))
                             ->relationship('person', 'name')
                             ->searchable()
                             ->preload()
                             ->live(),
                         Forms\Components\Select::make('person_reason')
-                            ->label('Motivo de la asociación')
+                            ->label(__('app.project.person_reason'))
                             ->options(Project::personReasons())
                             ->visible(fn ($get) => $get('person_id') !== null)
                             ->native(false),
                         Forms\Components\ToggleButtons::make('priority')
-                            ->label('Prioridad')
+                            ->label(__('app.project.priority'))
                             ->options(Project::priorities())
                             ->icons([
                                 Project::PRIORITY_LOW => 'heroicon-o-arrow-down',
@@ -89,26 +98,26 @@ class ProjectResource extends Resource
                             ])
                             ->inline(),
                         Forms\Components\Toggle::make('is_archived')
-                            ->label('Archivado'),
+                            ->label(__('app.project.is_archived')),
                         Forms\Components\Toggle::make('is_public')
-                            ->label('Público')
-                            ->helperText('Si está activo, el proyecto será visible en la web pública')
+                            ->label(__('app.project.is_public'))
+                            ->helperText(__('app.project.is_public_helper'))
                             ->live(),
                         Forms\Components\Placeholder::make('public_url')
-                            ->label('URL pública')
+                            ->label(__('app.project.public_url'))
                             ->content(fn ($record) => $record?->slug ? url('/p/'.$record->slug) : '-')
                             ->visible(fn ($get) => $get('is_public'))
                             ->columnSpanFull(),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Fechas')
+                Forms\Components\Section::make(__('app.project.section_dates'))
                     ->schema([
                         Forms\Components\DatePicker::make('due_date')
-                            ->label('Fecha límite'),
+                            ->label(__('app.project.due_date')),
                         Forms\Components\DatePicker::make('started_at')
-                            ->label('Fecha de inicio'),
+                            ->label(__('app.project.started_at')),
                         Forms\Components\DatePicker::make('completed_at')
-                            ->label('Fecha de finalización'),
+                            ->label(__('app.project.completed_at')),
                     ])->columns(3),
 
                 Forms\Components\Hidden::make('user_id')
@@ -121,29 +130,29 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Título')
+                    ->label(__('app.project.title'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.name')
-                    ->label('Estado')
+                    ->label(__('app.project.status'))
                     ->badge()
                     ->color(fn ($record) => $record->status->color ?? 'gray')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Categoría')
+                    ->label(__('app.project.category'))
                     ->badge()
                     ->color(fn ($record) => $record->category->color ?? 'gray')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('person.name')
-                    ->label('Persona')
+                    ->label(__('app.person.label'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('due_date')
-                    ->label('Fecha límite')
+                    ->label(__('app.project.due_date'))
                     ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('priority')
-                    ->label('Prioridad')
+                    ->label(__('app.project.priority'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => Project::priorities()[$state] ?? '-')
                     ->color(fn ($state) => match ($state) {
@@ -155,42 +164,42 @@ class ProjectResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_archived')
-                    ->label('Archivado')
+                    ->label(__('app.project.is_archived'))
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_public')
-                    ->label('Público')
+                    ->label(__('app.project.is_public'))
                     ->boolean()
                     ->trueIcon('heroicon-o-globe-alt')
                     ->falseIcon('heroicon-o-lock-closed')
                     ->trueColor('success')
                     ->falseColor('gray'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Creado')
+                    ->label(__('app.common.created_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Actualizado')
+                    ->label(__('app.common.updated_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status_id')
-                    ->label('Estado')
+                    ->label(__('app.project.status'))
                     ->relationship('status', 'name'),
                 Tables\Filters\SelectFilter::make('category_id')
-                    ->label('Categoría')
+                    ->label(__('app.project.category'))
                     ->relationship('category', 'name'),
                 Tables\Filters\TernaryFilter::make('is_archived')
-                    ->label('Archivado'),
+                    ->label(__('app.project.is_archived')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('export')
-                    ->label('Exportar')
+                    ->label(__('app.project.export'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('gray')
                     ->action(function (Project $record): BinaryFileResponse {
@@ -198,7 +207,7 @@ class ProjectResource extends Resource
                         $zipPath = $exporter->export($record);
 
                         Notification::make()
-                            ->title('Proyecto exportado')
+                            ->title(__('app.project.exported'))
                             ->success()
                             ->send();
 

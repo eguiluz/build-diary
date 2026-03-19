@@ -39,11 +39,11 @@ class CalendarWidget extends FullCalendarWidget
                 'right' => 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
             ],
             'buttonText' => [
-                'today' => 'Hoy',
-                'month' => 'Mes',
-                'week' => 'Semana',
-                'day' => 'Día',
-                'list' => 'Lista',
+                'today' => __('app.widgets.calendar.today'),
+                'month' => __('app.widgets.calendar.month'),
+                'week' => __('app.widgets.calendar.week'),
+                'day' => __('app.widgets.calendar.day'),
+                'list' => __('app.widgets.calendar.list'),
             ],
             'navLinks' => true,
             'editable' => true,
@@ -98,61 +98,61 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             TextInput::make('title')
-                ->label('Título')
+                ->label(__('app.calendar_event.title'))
                 ->required()
                 ->maxLength(255),
 
             Textarea::make('description')
-                ->label('Descripción')
+                ->label(__('app.calendar_event.description'))
                 ->rows(3),
 
             Grid::make(2)
                 ->schema([
                     Select::make('type')
-                        ->label('Tipo')
+                        ->label(__('app.calendar_event.type'))
                         ->required()
                         ->options([
-                            'deadline' => 'Fecha límite',
-                            'birthday' => 'Cumpleaños',
-                            'custom' => 'Personalizado',
-                            'reminder' => 'Recordatorio',
+                            'deadline' => __('app.calendar_event.types.deadline'),
+                            'birthday' => __('app.calendar_event.types.birthday'),
+                            'custom' => __('app.calendar_event.types.custom'),
+                            'reminder' => __('app.calendar_event.types.reminder'),
                         ])
                         ->default('custom'),
 
                     ColorPicker::make('color')
-                        ->label('Color'),
+                        ->label(__('app.calendar_event.color')),
                 ]),
 
             Grid::make(2)
                 ->schema([
                     DatePicker::make('event_date')
-                        ->label('Fecha')
+                        ->label(__('app.calendar_event.event_date'))
                         ->required(),
 
                     TimePicker::make('event_time')
-                        ->label('Hora'),
+                        ->label(__('app.calendar_event.event_time')),
                 ]),
 
             Grid::make(2)
                 ->schema([
                     DatePicker::make('end_date')
-                        ->label('Fecha de fin'),
+                        ->label(__('app.calendar_event.end_date')),
 
                     Toggle::make('is_all_day')
-                        ->label('Todo el día')
+                        ->label(__('app.calendar_event.is_all_day'))
                         ->default(true),
                 ]),
 
             Grid::make(2)
                 ->schema([
                     Select::make('project_id')
-                        ->label('Proyecto')
+                        ->label(__('app.project.label'))
                         ->relationship('project', 'title', fn ($query) => $query->where('user_id', Auth::id()))
                         ->searchable()
                         ->preload(),
 
                     Select::make('person_id')
-                        ->label('Persona')
+                        ->label(__('app.person.label'))
                         ->options(fn () => Person::where('user_id', Auth::id())->pluck('name', 'id'))
                         ->searchable()
                         ->preload(),
@@ -161,10 +161,10 @@ class CalendarWidget extends FullCalendarWidget
             Grid::make(2)
                 ->schema([
                     Toggle::make('reminder_enabled')
-                        ->label('Recordatorio'),
+                        ->label(__('app.calendar_event.reminder_enabled')),
 
                     TextInput::make('reminder_minutes_before')
-                        ->label('Minutos antes')
+                        ->label(__('app.calendar_event.reminder_minutes_before'))
                         ->numeric()
                         ->default(60)
                         ->visible(fn ($get) => $get('reminder_enabled')),
@@ -179,7 +179,7 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             CreateAction::make()
-                ->label('Nuevo evento')
+                ->label(__('app.calendar_event.new_event'))
                 ->mutateFormDataUsing(function (array $data): array {
                     $data['user_id'] = Auth::id();
 
@@ -195,9 +195,9 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             EditAction::make()
-                ->label('Editar'),
+                ->label(__('app.common.edit')),
             DeleteAction::make()
-                ->label('Eliminar'),
+                ->label(__('app.common.delete')),
         ];
     }
 

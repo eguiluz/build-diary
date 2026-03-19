@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ config('app.name', 'Build Diary') }} - Tu diario de proyectos personales</title>
-    <meta name="description" content="Build Diary te ayuda a documentar, organizar y dar seguimiento a todos tus proyectos personales en un solo lugar.">
+    <title>{{ config('app.name', 'Build Diary') }} - {{ __('app.welcome.page_title') }}</title>
+    <meta name="description" content="{{ __('app.welcome.meta_description') }}">
 
     @include('partials.favicon')
 
@@ -33,11 +33,11 @@
                 <div class="flex items-center gap-4">
                     @auth
                         <a class="inline-flex items-center rounded-lg bg-amber-500 px-4 py-2 font-medium text-white transition-colors hover:bg-amber-600" href="{{ url('/admin') }}">
-                            Ir al Panel
+                            {{ __('app.welcome.go_to_panel') }}
                         </a>
                     @else
                         <a class="font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white" href="{{ url('/admin/login') }}">
-                            Iniciar sesión
+                            {{ __('app.welcome.login') }}
                         </a>
                     @endauth
                 </div>
@@ -49,23 +49,23 @@
     <section class="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="mb-6 text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl dark:text-white">
-                Documenta el progreso de
-                <span class="text-amber-500">tus proyectos</span>
+                {{ __('app.welcome.hero_title') }}
+                <span class="text-amber-500">{{ __('app.welcome.hero_title_highlight') }}</span>
             </h1>
             <p class="mx-auto mb-10 max-w-3xl text-xl text-slate-600 dark:text-slate-300">
-                Build Diary es tu compañero para gestionar proyectos personales. Lleva un diario de desarrollo, organiza archivos, gestiona contactos y nunca pierdas el hilo de lo que estás construyendo.
+                {{ __('app.welcome.hero_subtitle') }}
             </p>
             <div class="flex flex-col justify-center gap-4 sm:flex-row">
                 @auth
                     <a class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:scale-105 hover:bg-amber-600" href="{{ url('/admin') }}">
-                        Ir al Panel
+                        {{ __('app.welcome.go_to_panel') }}
                         <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
                     </a>
                 @else
                     <a class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:scale-105 hover:bg-amber-600" href="{{ url('/admin/login') }}">
-                        Iniciar sesión
+                        {{ __('app.welcome.login') }}
                         <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
@@ -79,10 +79,10 @@
     <section class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
         <div class="mb-16 text-center">
             <h2 class="mb-4 text-3xl font-bold text-slate-900 sm:text-4xl dark:text-white">
-                Todo lo que necesitas para tus proyectos
+                {{ __('app.welcome.features_title') }}
             </h2>
             <p class="mx-auto max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-                Herramientas diseñadas para mantener organizados tus proyectos personales
+                {{ __('app.welcome.features_subtitle') }}
             </p>
         </div>
 
@@ -94,9 +94,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                 </div>
-                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">Gestión de Proyectos</h3>
+                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">{{ __('app.welcome.feature_projects_title') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Crea y organiza todos tus proyectos personales. Define estados, prioridades, fechas límite y categorías para mantener todo bajo control.
+                    {{ __('app.welcome.feature_projects_desc') }}
                 </p>
             </div>
 
@@ -107,9 +107,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                 </div>
-                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">Diario de Desarrollo</h3>
+                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">{{ __('app.welcome.feature_diary_title') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Documenta tu progreso diario. Registra notas, hitos, problemas encontrados y soluciones. Nunca olvides cómo resolviste algo.
+                    {{ __('app.welcome.feature_diary_desc') }}
                 </p>
             </div>
 
@@ -120,9 +120,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">Gestión de Archivos</h3>
+                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">{{ __('app.welcome.feature_files_title') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Sube y organiza documentos, diseños, capturas y cualquier archivo relacionado con tus proyectos en un solo lugar.
+                    {{ __('app.welcome.feature_files_desc') }}
                 </p>
             </div>
 
@@ -133,9 +133,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">Calendario y Eventos</h3>
+                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">{{ __('app.welcome.feature_calendar_title') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Visualiza fechas importantes, deadlines y eventos de tus proyectos. Configura recordatorios para no perder ninguna fecha clave.
+                    {{ __('app.welcome.feature_calendar_desc') }}
                 </p>
             </div>
 
@@ -146,9 +146,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">Gestión de Contactos</h3>
+                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">{{ __('app.welcome.feature_contacts_title') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Mantén un registro de personas relacionadas con tus proyectos: colaboradores, clientes o mentores. Con recordatorios de cumpleaños incluidos.
+                    {{ __('app.welcome.feature_contacts_desc') }}
                 </p>
             </div>
 
@@ -159,9 +159,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                 </div>
-                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">Etiquetas y Organización</h3>
+                <h3 class="mb-3 text-xl font-semibold text-slate-900 dark:text-white">{{ __('app.welcome.feature_tags_title') }}</h3>
                 <p class="text-slate-600 dark:text-slate-400">
-                    Usa etiquetas personalizadas con colores para categorizar y filtrar tus proyectos de forma rápida y visual.
+                    {{ __('app.welcome.feature_tags_desc') }}
                 </p>
             </div>
         </div>
@@ -173,7 +173,7 @@
             <div class="grid items-center gap-16 lg:grid-cols-2">
                 <div>
                     <h2 class="mb-6 text-3xl font-bold text-white sm:text-4xl">
-                        ¿Por qué usar Build Diary?
+                        {{ __('app.welcome.why_title') }}
                     </h2>
                     <div class="space-y-6">
                         <div class="flex gap-4">
@@ -183,8 +183,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="mb-1 text-lg font-semibold text-white">Nunca pierdas el contexto</h3>
-                                <p class="text-slate-400">Cuando retomes un proyecto después de semanas, tendrás todo documentado: qué hiciste, qué problemas encontraste y cómo los resolviste.</p>
+                                <h3 class="mb-1 text-lg font-semibold text-white">{{ __('app.welcome.benefit_context_title') }}</h3>
+                                <p class="text-slate-400">{{ __('app.welcome.benefit_context_desc') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -194,8 +194,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="mb-1 text-lg font-semibold text-white">Todo en un solo lugar</h3>
-                                <p class="text-slate-400">Deja de tener notas dispersas en diferentes apps. Archivos, enlaces, contactos y progreso, todo centralizado por proyecto.</p>
+                                <h3 class="mb-1 text-lg font-semibold text-white">{{ __('app.welcome.benefit_centralized_title') }}</h3>
+                                <p class="text-slate-400">{{ __('app.welcome.benefit_centralized_desc') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -205,8 +205,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="mb-1 text-lg font-semibold text-white">Diseñado para proyectos personales</h3>
-                                <p class="text-slate-400">No es una herramienta empresarial sobredimensionada. Es simple, directo y pensado para lo que realmente necesitas.</p>
+                                <h3 class="mb-1 text-lg font-semibold text-white">{{ __('app.welcome.benefit_personal_title') }}</h3>
+                                <p class="text-slate-400">{{ __('app.welcome.benefit_personal_desc') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -216,8 +216,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="mb-1 text-lg font-semibold text-white">Recordatorios inteligentes</h3>
-                                <p class="text-slate-400">Recibe notificaciones de eventos próximos, cumpleaños de contactos y deadlines importantes.</p>
+                                <h3 class="mb-1 text-lg font-semibold text-white">{{ __('app.welcome.benefit_reminders_title') }}</h3>
+                                <p class="text-slate-400">{{ __('app.welcome.benefit_reminders_desc') }}</p>
                             </div>
                         </div>
                     </div>
@@ -251,21 +251,21 @@
     <section class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
         <div class="bg-linear-to-r rounded-3xl from-amber-500 to-orange-500 p-12 text-center lg:p-16">
             <h2 class="mb-4 text-3xl font-bold text-white sm:text-4xl">
-                Empieza a documentar tus proyectos hoy
+                {{ __('app.welcome.cta_title') }}
             </h2>
             <p class="mx-auto mb-8 max-w-2xl text-xl text-amber-100">
-                Crea tu cuenta gratis y comienza a organizar todos tus proyectos personales en un solo lugar.
+                {{ __('app.welcome.cta_subtitle') }}
             </p>
             @guest
                 <a class="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-semibold text-amber-600 shadow-lg transition-all hover:scale-105" href="{{ url('/admin/login') }}">
-                    Iniciar sesión
+                    {{ __('app.welcome.login') }}
                     <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                 </a>
             @else
                 <a class="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-semibold text-amber-600 shadow-lg transition-all hover:scale-105" href="{{ url('/admin') }}">
-                    Ir al Panel
+                    {{ __('app.welcome.go_to_panel') }}
                     <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -285,10 +285,10 @@
                     <span class="text-lg font-semibold text-slate-900 dark:text-white">Build Diary</span>
                 </div>
                 <p class="text-sm text-slate-500 dark:text-slate-400">
-                    Hecho con Laravel, FilamentPHP y mucho cafe.
+                    {{ __('app.welcome.footer_made_with') }}
                 </p>
                 <p class="text-sm text-slate-400 dark:text-slate-500">
-                    &copy; {{ date('Y') }} Build Diary. Todos los derechos reservados.
+                    {!! __('app.welcome.footer_rights', ['year' => date('Y')]) !!}
                 </p>
             </div>
         </div>

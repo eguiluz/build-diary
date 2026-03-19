@@ -26,19 +26,19 @@ class RecentProjects extends BaseWidget
             )
             ->columns([
                 TextColumn::make('title')
-                    ->label('Título')
+                    ->label(__('app.project.title'))
                     ->searchable()
                     ->url(fn (Project $record): string => route('filament.admin.resources.projects.edit', ['record' => $record])),
                 TextColumn::make('status.name')
-                    ->label('Estado')
+                    ->label(__('app.project.status'))
                     ->badge()
                     ->color(fn ($state, $record) => $record->status->color ?? 'gray'),
                 TextColumn::make('category.name')
-                    ->label('Categoría'),
+                    ->label(__('app.project.category')),
                 TextColumn::make('person.name')
-                    ->label('Persona'),
+                    ->label(__('app.person.label')),
                 TextColumn::make('updated_at')
-                    ->label('Actualizado')
+                    ->label(__('app.common.updated_at'))
                     ->since(),
             ])
             ->paginated(false);

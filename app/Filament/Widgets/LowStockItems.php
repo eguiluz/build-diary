@@ -17,7 +17,10 @@ class LowStockItems extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Alertas de stock';
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return __('app.widgets.low_stock.heading');
+    }
 
     public function table(Table $table): Table
     {
@@ -39,10 +42,10 @@ class LowStockItems extends BaseWidget
                     ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&background=f59e0b&color=fff')
                     ->size(32),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Artículo')
+                    ->label(__('app.inventory_item.item_label'))
                     ->description(fn ($record) => $record->location),
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Categoría')
+                    ->label(__('app.inventory_item.category'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => InventoryItem::categories()[$state] ?? $state)
                     ->color(fn ($state) => match ($state) {
@@ -54,42 +57,42 @@ class LowStockItems extends BaseWidget
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('quantity')
-                    ->label('Stock')
+                    ->label(__('app.inventory_item.stock_label'))
                     ->numeric(decimalPlaces: 0)
                     ->suffix(fn ($record) => $record->unit ? ' '.$record->unit : '')
                     ->color(fn ($record) => $record->isOutOfStock() ? 'danger' : ($record->isLowStock() ? 'warning' : null))
                     ->weight('bold'),
                 Tables\Columns\TextColumn::make('min_quantity')
-                    ->label('Mínimo')
+                    ->label(__('app.inventory_item.minimum_label'))
                     ->numeric(decimalPlaces: 0)
                     ->suffix(fn ($record) => $record->unit ? ' '.$record->unit : '')
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Estado')
+                    ->label(__('app.inventory_item.condition'))
                     ->state(function ($record) {
                         if ($record->isOutOfStock()) {
-                            return 'Sin stock';
+                            return __('app.widgets.low_stock.out_of_stock');
                         }
                         if ($record->isLowStock()) {
-                            return 'Stock bajo';
+                            return __('app.widgets.low_stock.low_stock');
                         }
                         if ($record->is_lent) {
-                            return 'Prestado a '.$record->lent_to;
+                            return __('app.widgets.low_stock.lent_to', ['name' => $record->lent_to]);
                         }
 
                         return 'OK';
                     })
                     ->badge()
                     ->color(fn ($state) => match (true) {
-                        str_contains((string) $state, 'Sin stock') => 'danger',
-                        str_contains((string) $state, 'Stock bajo') => 'warning',
-                        str_contains((string) $state, 'Prestado') => 'info',
+                        str_contains((string) $state, __('app.widgets.low_stock.out_of_stock')) => 'danger',
+                        str_contains((string) $state, __('app.widgets.low_stock.low_stock')) => 'warning',
+                        str_contains((string) $state, __('app.inventory_item.lent_to')) => 'info',
                         default => 'success',
                     }),
             ])
             ->paginated(false)
-            ->emptyStateHeading('Todo en orden')
-            ->emptyStateDescription('No hay items con stock bajo ni prestados.')
+            ->emptyStateHeading(__('app.widgets.low_stock.empty_heading'))
+            ->emptyStateDescription(__('app.widgets.low_stock.empty_desc'))
             ->emptyStateIcon('heroicon-o-check-circle');
     }
 

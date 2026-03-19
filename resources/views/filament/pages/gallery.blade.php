@@ -54,14 +54,14 @@
             <div class="col-span-full">
                 <div class="py-12 text-center">
                     <x-heroicon-o-photo class="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">Sin proyectos</h3>
+                    <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">{{ __('app.filament.gallery.no_projects') }}</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Comienza creando tu primer proyecto.
+                        {{ __('app.filament.gallery.no_projects_desc') }}
                     </p>
                     <div class="mt-6">
                         <a class="bg-primary-600 hover:bg-primary-500 focus:bg-primary-500 active:bg-primary-700 focus:ring-primary-500 inline-flex items-center rounded-lg border border-transparent px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2" href="{{ route('filament.admin.resources.projects.create') }}">
                             <x-heroicon-o-plus class="mr-2 h-4 w-4" />
-                            Nuevo proyecto
+                            {{ __('app.filament.gallery.new_project') }}
                         </a>
                     </div>
                 </div>

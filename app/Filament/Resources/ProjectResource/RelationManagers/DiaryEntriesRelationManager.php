@@ -16,42 +16,51 @@ class DiaryEntriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'diaryEntries';
 
-    protected static ?string $title = 'Diario';
-
     protected static ?string $icon = 'heroicon-o-book-open';
 
-    protected static ?string $modelLabel = 'entrada';
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return __('app.diary_entry.section_title');
+    }
 
-    protected static ?string $pluralModelLabel = 'entradas';
+    public static function getModelLabel(): string
+    {
+        return __('app.diary_entry.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.diary_entry.model_plural');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('type')
-                    ->label('Tipo')
+                    ->label(__('app.diary_entry.type'))
                     ->options(DiaryEntry::getTypes())
                     ->default(DiaryEntry::TYPE_NOTE)
                     ->required(),
                 Forms\Components\RichEditor::make('content')
-                    ->label('Contenido')
+                    ->label(__('app.diary_entry.content'))
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\DatePicker::make('entry_date')
-                    ->label('Fecha')
+                    ->label(__('app.diary_entry.entry_date'))
                     ->required()
                     ->default(now()),
                 Forms\Components\TimePicker::make('entry_time')
-                    ->label('Hora')
+                    ->label(__('app.diary_entry.entry_time'))
                     ->seconds(false)
                     ->default(now()),
                 Forms\Components\TextInput::make('time_spent_minutes')
-                    ->label('Tiempo dedicado (minutos)')
+                    ->label(__('app.diary_entry.time_spent_minutes_label'))
                     ->numeric()
                     ->minValue(0)
                     ->step(5),
                 Forms\Components\FileUpload::make('images')
-                    ->label('Imágenes')
+                    ->label(__('app.diary_entry.images'))
                     ->multiple()
                     ->image()
                     ->imagePreviewHeight('120')
@@ -74,7 +83,7 @@ class DiaryEntriesRelationManager extends RelationManager
             ->defaultSort('entry_date', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('type')
-                    ->label('Tipo')
+                    ->label(__('app.diary_entry.type'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => DiaryEntry::getTypes()[$state] ?? $state)
                     ->color(fn ($state) => match ($state) {
@@ -86,19 +95,19 @@ class DiaryEntriesRelationManager extends RelationManager
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('entry_date')
-                    ->label('Fecha')
+                    ->label(__('app.diary_entry.entry_date'))
                     ->date('d/m/Y')
                     ->description(fn ($record) => $record->entry_time?->format('H:i'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('content')
-                    ->label('Contenido')
+                    ->label(__('app.diary_entry.content'))
                     ->html()
                     ->limit(100),
                 Tables\Columns\TextColumn::make('time_spent_minutes')
-                    ->label('Tiempo')
+                    ->label(__('app.diary_entry.time_spent'))
                     ->formatStateUsing(fn ($state) => $state ? floor($state / 60).'h '.($state % 60).'m' : '-'),
                 Tables\Columns\TextColumn::make('images_count')
-                    ->label('Imágenes')
+                    ->label(__('app.diary_entry.images'))
                     ->counts('images')
                     ->badge()
                     ->color('gray'),

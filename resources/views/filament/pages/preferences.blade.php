@@ -4,7 +4,7 @@
 
         <div class="mt-6">
             <x-filament::button type="submit">
-                Guardar preferencias
+                {{ __('app.filament.preferences.save_button') }}
             </x-filament::button>
         </div>
     </form>

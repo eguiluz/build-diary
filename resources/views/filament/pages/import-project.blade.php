@@ -4,33 +4,32 @@
 
         <div class="mt-6">
             <x-filament::button type="submit" icon="heroicon-o-arrow-up-tray">
-                Importar proyecto
+                {{ __('app.filament.import.button') }}
             </x-filament::button>
         </div>
     </form>
 
     <x-filament::section class="mt-8">
         <x-slot name="heading">
-            Información sobre la importación
+            {{ __('app.filament.import.info_heading') }}
         </x-slot>
 
         <div class="prose dark:prose-invert max-w-none text-sm">
-            <p>Al importar un proyecto se incluirán:</p>
+            <p>{{ __('app.filament.import.info_intro') }}</p>
             <ul>
-                <li><strong>Datos del proyecto:</strong> título, descripción, categoría, fechas, etc.</li>
-                <li><strong>Persona asociada:</strong> se buscará por nombre o se creará si no existe.</li>
-                <li><strong>Etiquetas:</strong> se buscarán por nombre o se crearán si no existen.</li>
-                <li><strong>Archivos:</strong> imágenes y documentos adjuntos.</li>
-                <li><strong>Entradas de diario:</strong> todas las entradas con sus fechas.</li>
-                <li><strong>Enlaces:</strong> URLs y referencias externas.</li>
-                <li><strong>Tareas:</strong> lista de tareas con su estado.</li>
-                <li><strong>Gastos:</strong> registro de gastos del proyecto.</li>
-                <li><strong>Eventos:</strong> eventos de calendario asociados.</li>
+                <li><strong>{{ __('app.filament.import.info_project_data') }}:</strong> {{ __('app.filament.import.info_project_data_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_person') }}:</strong> {{ __('app.filament.import.info_person_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_tags') }}:</strong> {{ __('app.filament.import.info_tags_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_files') }}:</strong> {{ __('app.filament.import.info_files_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_diary') }}:</strong> {{ __('app.filament.import.info_diary_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_links') }}:</strong> {{ __('app.filament.import.info_links_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_tasks') }}:</strong> {{ __('app.filament.import.info_tasks_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_expenses') }}:</strong> {{ __('app.filament.import.info_expenses_desc') }}</li>
+                <li><strong>{{ __('app.filament.import.info_events') }}:</strong> {{ __('app.filament.import.info_events_desc') }}</li>
             </ul>
 
             <p class="text-gray-500 dark:text-gray-400">
-                <strong>Nota:</strong> El proyecto importado siempre será privado por seguridad.
-                El título se modificará añadiendo "(importado)" para identificarlo.
+                <strong>{{ __('app.common.note') }}:</strong> {{ __('app.filament.import.info_note') }}
             </p>
         </div>
     </x-filament::section>
