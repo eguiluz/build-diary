@@ -17,7 +17,10 @@ class ProjectStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
 
-    protected static ?string $navigationGroup = 'Configuración';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.navigation.settings');
+    }
 
     protected static ?string $modelLabel = 'Estado';
 
