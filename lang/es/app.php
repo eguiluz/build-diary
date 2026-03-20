@@ -383,6 +383,9 @@ return [
         'birthdays' => [
             'heading' => 'Próximos cumpleaños',
         ],
+        'recent_projects' => [
+            'heading' => 'Proyectos recientes',
+        ],
         'stats' => [
             'active_projects' => 'Proyectos activos',
             'active_projects_desc' => 'En progreso',
