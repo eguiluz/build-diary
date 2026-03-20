@@ -634,6 +634,7 @@ return [
         'return_action' => 'Devolver',
         'empty_heading' => 'Sin préstamos registrados',
         'empty_desc' => 'Registra préstamos de este artículo para llevar un historial.',
+        'return_notes_prefix' => 'Devolución',
     ],
 
 ];

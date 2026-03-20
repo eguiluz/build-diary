@@ -311,7 +311,7 @@ class InventoryItemResource extends Resource
                         if ($activeLoan) {
                             $notes = $activeLoan->notes;
                             if (! empty($data['return_notes'])) {
-                                $notes = $notes ? $notes."\n\nDevolución: ".$data['return_notes'] : $data['return_notes'];
+                                $notes = $notes ? $notes."\n\n".__('app.loan.return_notes_prefix').': '.$data['return_notes'] : $data['return_notes'];
                             }
 
                             $activeLoan->update([

@@ -634,6 +634,7 @@ return [
         'return_action' => 'Return',
         'empty_heading' => 'No loans recorded',
         'empty_desc' => 'Record loans for this item to keep a history.',
+        'return_notes_prefix' => 'Return',
     ],
 
 ];

@@ -91,7 +91,7 @@ class TasksRelationManager extends RelationManager
                 Tables\Actions\Action::make('toggle')
                     ->icon(fn ($record) => $record->is_completed ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                     ->color(fn ($record) => $record->is_completed ? 'warning' : 'success')
-                    ->tooltip(fn ($record) => $record->is_completed ? 'Marcar como pendiente' : 'Marcar como completada')
+                    ->tooltip(fn ($record) => $record->is_completed ? __('app.task.toggle_incomplete') : __('app.task.toggle_complete'))
                     ->action(function ($record) {
                         $record->is_completed
                             ? $record->markAsIncomplete()
