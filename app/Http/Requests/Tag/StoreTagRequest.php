@@ -37,9 +37,9 @@ final class StoreTagRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El nombre de la etiqueta es obligatorio.',
-            'name.unique' => 'Ya existe una etiqueta con ese nombre.',
-            'color.regex' => 'El color debe ser un código hexadecimal válido.',
+            'name.required' => __('app.validation.tag_name_required'),
+            'name.unique' => __('app.validation.tag_name_unique'),
+            'color.regex' => __('app.validation.color_hex'),
         ];
     }
 }

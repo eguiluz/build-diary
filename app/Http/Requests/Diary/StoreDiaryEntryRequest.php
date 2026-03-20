@@ -37,9 +37,9 @@ final class StoreDiaryEntryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'content.required' => 'El contenido es obligatorio.',
-            'type.in' => 'El tipo de entrada no es válido.',
-            'time_spent_minutes.max' => 'El tiempo no puede superar las 24 horas.',
+            'content.required' => __('app.validation.content_required'),
+            'type.in' => __('app.validation.type_invalid'),
+            'time_spent_minutes.max' => __('app.validation.time_max'),
         ];
     }
 }

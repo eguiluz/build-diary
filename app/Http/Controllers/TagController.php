@@ -50,7 +50,7 @@ final class TagController extends Controller
             return response()->json($tag, 201);
         }
 
-        return back()->with('success', 'Etiqueta creada correctamente.');
+        return back()->with('success', __('app.flash.tag.created'));
     }
 
     public function update(UpdateTagRequest $request, Tag $tag): RedirectResponse|JsonResponse
@@ -67,7 +67,7 @@ final class TagController extends Controller
             return response()->json($tag->fresh());
         }
 
-        return back()->with('success', 'Etiqueta actualizada correctamente.');
+        return back()->with('success', __('app.flash.tag.updated'));
     }
 
     public function destroy(Request $request, Tag $tag): RedirectResponse|JsonResponse
@@ -80,6 +80,6 @@ final class TagController extends Controller
             return response()->json(null, 204);
         }
 
-        return back()->with('success', 'Etiqueta eliminada correctamente.');
+        return back()->with('success', __('app.flash.tag.deleted'));
     }
 }

@@ -45,7 +45,7 @@ final class ProjectLinkController extends Controller
             return response()->json($link, 201);
         }
 
-        return back()->with('success', 'Enlace añadido correctamente.');
+        return back()->with('success', __('app.flash.link.created'));
     }
 
     public function update(Request $request, Project $project, ProjectLink $link): JsonResponse|RedirectResponse
@@ -65,7 +65,7 @@ final class ProjectLinkController extends Controller
             return response()->json($link->fresh());
         }
 
-        return back()->with('success', 'Enlace actualizado correctamente.');
+        return back()->with('success', __('app.flash.link.updated'));
     }
 
     public function destroy(Request $request, Project $project, ProjectLink $link): JsonResponse|RedirectResponse
@@ -78,7 +78,7 @@ final class ProjectLinkController extends Controller
             return response()->json(null, 204);
         }
 
-        return back()->with('success', 'Enlace eliminado correctamente.');
+        return back()->with('success', __('app.flash.link.deleted'));
     }
 
     public function reorder(Request $request, Project $project): JsonResponse
@@ -96,6 +96,6 @@ final class ProjectLinkController extends Controller
                 ->update(['order' => $position]);
         }
 
-        return response()->json(['message' => 'Orden actualizado']);
+        return response()->json(['message' => __('app.flash.link.reordered')]);
     }
 }

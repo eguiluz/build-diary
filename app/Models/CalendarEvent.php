@@ -159,10 +159,10 @@ final class CalendarEvent extends Model
     public static function getTypes(): array
     {
         return [
-            self::TYPE_DEADLINE => 'Fecha de entrega',
-            self::TYPE_BIRTHDAY => 'Cumpleaños',
-            self::TYPE_CUSTOM => 'Evento personalizado',
-            self::TYPE_REMINDER => 'Recordatorio',
+            self::TYPE_DEADLINE => __('app.calendar_event.types.deadline'),
+            self::TYPE_BIRTHDAY => __('app.calendar_event.types.birthday'),
+            self::TYPE_CUSTOM => __('app.calendar_event.types.custom'),
+            self::TYPE_REMINDER => __('app.calendar_event.types.reminder'),
         ];
     }
 }

@@ -16,41 +16,35 @@ class LoansRelationManager extends RelationManager
 {
     protected static string $relationship = 'loans';
 
-    protected static ?string $title = 'Historial de préstamos';
-
-    protected static ?string $modelLabel = 'Préstamo';
-
-    protected static ?string $pluralModelLabel = 'Préstamos';
-
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('borrower_name')
-                    ->label('Nombre del prestatario')
+                    ->label(__('app.loan.borrower_name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('borrower_contact')
-                    ->label('Contacto')
+                    ->label(__('app.loan.borrower_contact'))
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('lent_at')
-                    ->label('Fecha de préstamo')
+                    ->label(__('app.loan.lent_at'))
                     ->required()
                     ->default(now()),
                 Forms\Components\DatePicker::make('expected_return_at')
-                    ->label('Devolución esperada'),
+                    ->label(__('app.loan.expected_return_at')),
                 Forms\Components\DatePicker::make('returned_at')
-                    ->label('Fecha de devolución'),
+                    ->label(__('app.loan.returned_at')),
                 Forms\Components\Select::make('condition_at_loan')
-                    ->label('Estado al prestar')
+                    ->label(__('app.loan.condition_at_loan'))
                     ->options(InventoryItem::conditions())
                     ->native(false),
                 Forms\Components\Select::make('condition_at_return')
-                    ->label('Estado al devolver')
+                    ->label(__('app.loan.condition_at_return'))
                     ->options(InventoryItem::conditions())
                     ->native(false),
                 Forms\Components\Textarea::make('notes')
-                    ->label('Notas')
+                    ->label(__('app.loan.notes'))
                     ->rows(2)
                     ->columnSpanFull(),
             ]);
@@ -62,48 +56,48 @@ class LoansRelationManager extends RelationManager
             ->recordTitleAttribute('borrower_name')
             ->columns([
                 Tables\Columns\TextColumn::make('borrower_name')
-                    ->label('Prestatario')
+                    ->label(__('app.loan.borrower'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('borrower_contact')
-                    ->label('Contacto')
+                    ->label(__('app.loan.borrower_contact'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('lent_at')
-                    ->label('Prestado')
+                    ->label(__('app.loan.lent_at_short'))
                     ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expected_return_at')
-                    ->label('Devolución esperada')
+                    ->label(__('app.loan.expected_return_at'))
                     ->date('d/m/Y')
                     ->color(fn (InventoryLoan $record) => $record->isOverdue() ? 'danger' : null)
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('returned_at')
-                    ->label('Devuelto')
+                    ->label(__('app.loan.returned_at_short'))
                     ->date('d/m/Y')
-                    ->placeholder('Pendiente')
+                    ->placeholder(__('app.loan.pending'))
                     ->badge()
                     ->color(fn ($state) => $state ? 'success' : 'warning'),
                 Tables\Columns\TextColumn::make('duration_days')
-                    ->label('Días')
-                    ->suffix(' días')
+                    ->label(__('app.loan.duration_days'))
+                    ->suffix(__('app.loan.duration_days_suffix'))
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('condition_at_loan')
-                    ->label('Estado inicial')
+                    ->label(__('app.loan.condition_initial'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state ? InventoryItem::conditions()[$state] ?? $state : '-')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('condition_at_return')
-                    ->label('Estado final')
+                    ->label(__('app.loan.condition_final'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state ? InventoryItem::conditions()[$state] ?? $state : '-')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('returned_at')
-                    ->label('Estado')
-                    ->placeholder('Todos')
-                    ->trueLabel('Devueltos')
-                    ->falseLabel('Pendientes')
+                    ->label(__('app.loan.filter_status'))
+                    ->placeholder(__('app.loan.filter_all'))
+                    ->trueLabel(__('app.loan.filter_returned'))
+                    ->falseLabel(__('app.loan.filter_pending'))
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('returned_at'),
                         false: fn ($query) => $query->whereNull('returned_at'),
@@ -111,7 +105,7 @@ class LoansRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Nuevo préstamo')
+                    ->label(__('app.loan.new_loan'))
                     ->mutateFormDataUsing(function (array $data): array {
                         /** @var InventoryItem $ownerRecord */
                         $ownerRecord = $this->getOwnerRecord();
@@ -131,21 +125,21 @@ class LoansRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('return')
-                    ->label('Devolver')
+                    ->label(__('app.loan.return_action'))
                     ->icon('heroicon-o-arrow-left-circle')
                     ->color('success')
                     ->visible(fn (InventoryLoan $record) => $record->isActive())
                     ->form([
                         Forms\Components\DatePicker::make('returned_at')
-                            ->label('Fecha de devolución')
+                            ->label(__('app.loan.returned_at'))
                             ->required()
                             ->default(now()),
                         Forms\Components\Select::make('condition_at_return')
-                            ->label('Estado al devolver')
+                            ->label(__('app.loan.condition_at_return'))
                             ->options(InventoryItem::conditions())
                             ->native(false),
                         Forms\Components\Textarea::make('return_notes')
-                            ->label('Notas de devolución')
+                            ->label(__('app.loan.return_notes'))
                             ->rows(2),
                     ])
                     ->action(function (InventoryLoan $record, array $data): void {
@@ -182,8 +176,8 @@ class LoansRelationManager extends RelationManager
                 ]),
             ])
             ->defaultSort('lent_at', 'desc')
-            ->emptyStateHeading('Sin préstamos registrados')
-            ->emptyStateDescription('Registra préstamos de este artículo para llevar un historial.')
+            ->emptyStateHeading(__('app.loan.empty_heading'))
+            ->emptyStateDescription(__('app.loan.empty_desc'))
             ->emptyStateIcon('heroicon-o-arrow-right-circle');
     }
 }

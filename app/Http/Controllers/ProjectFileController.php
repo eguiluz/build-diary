@@ -50,7 +50,7 @@ final class ProjectFileController extends Controller
             return response()->json($files, 201);
         }
 
-        return back()->with('success', count($files).' archivo(s) subido(s) correctamente.');
+        return back()->with('success', __('app.flash.file.uploaded', ['count' => count($files)]));
     }
 
     public function show(Project $project, ProjectFile $file): JsonResponse
@@ -83,7 +83,7 @@ final class ProjectFileController extends Controller
             return response()->json(null, 204);
         }
 
-        return back()->with('success', 'Archivo eliminado correctamente.');
+        return back()->with('success', __('app.flash.file.deleted'));
     }
 
     public function bulkDelete(Request $request, Project $project): JsonResponse|RedirectResponse
@@ -110,6 +110,6 @@ final class ProjectFileController extends Controller
             return response()->json(['deleted' => $files->count()]);
         }
 
-        return back()->with('success', $files->count().' archivo(s) eliminado(s).');
+        return back()->with('success', __('app.flash.file.bulk_deleted', ['count' => $files->count()]));
     }
 }

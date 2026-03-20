@@ -53,7 +53,7 @@ final class DiaryEntryController extends Controller
             return response()->json($entry, 201);
         }
 
-        return back()->with('success', 'Entrada añadida correctamente.');
+        return back()->with('success', __('app.flash.diary_entry.created'));
     }
 
     public function show(Project $project, DiaryEntry $entry): JsonResponse
@@ -76,7 +76,7 @@ final class DiaryEntryController extends Controller
             return response()->json($entry);
         }
 
-        return back()->with('success', 'Entrada actualizada correctamente.');
+        return back()->with('success', __('app.flash.diary_entry.updated'));
     }
 
     public function destroy(Request $request, Project $project, DiaryEntry $entry): JsonResponse|RedirectResponse
@@ -89,6 +89,6 @@ final class DiaryEntryController extends Controller
             return response()->json(null, 204);
         }
 
-        return back()->with('success', 'Entrada eliminada correctamente.');
+        return back()->with('success', __('app.flash.diary_entry.deleted'));
     }
 }

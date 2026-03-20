@@ -77,7 +77,7 @@ final class CalendarController extends Controller
             return response()->json($event, 201);
         }
 
-        return back()->with('success', 'Evento creado correctamente.');
+        return back()->with('success', __('app.flash.calendar_event.created'));
     }
 
     public function show(Request $request, CalendarEvent $event): JsonResponse
@@ -116,7 +116,7 @@ final class CalendarController extends Controller
             return response()->json($event->fresh());
         }
 
-        return back()->with('success', 'Evento actualizado correctamente.');
+        return back()->with('success', __('app.flash.calendar_event.updated'));
     }
 
     public function destroy(Request $request, CalendarEvent $event): RedirectResponse|JsonResponse
@@ -129,6 +129,6 @@ final class CalendarController extends Controller
             return response()->json(null, 204);
         }
 
-        return back()->with('success', 'Evento eliminado correctamente.');
+        return back()->with('success', __('app.flash.calendar_event.deleted'));
     }
 }

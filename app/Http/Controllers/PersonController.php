@@ -83,7 +83,7 @@ final class PersonController extends Controller
 
         return redirect()
             ->route('people.show', $person)
-            ->with('success', 'Persona creada correctamente.');
+            ->with('success', __('app.flash.person.created'));
     }
 
     public function edit(Person $person): View
@@ -121,7 +121,7 @@ final class PersonController extends Controller
 
         return redirect()
             ->route('people.show', $person)
-            ->with('success', 'Persona actualizada correctamente.');
+            ->with('success', __('app.flash.person.updated'));
     }
 
     public function destroy(Request $request, Person $person): RedirectResponse|JsonResponse
@@ -136,6 +136,6 @@ final class PersonController extends Controller
 
         return redirect()
             ->route('people.index')
-            ->with('success', 'Persona eliminada correctamente.');
+            ->with('success', __('app.flash.person.deleted'));
     }
 }

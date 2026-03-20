@@ -49,10 +49,10 @@ final class StoreCalendarEventRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'El título es obligatorio.',
-            'event_date.required' => 'La fecha del evento es obligatoria.',
-            'end_date.after_or_equal' => 'La fecha de fin debe ser posterior a la fecha de inicio.',
-            'color.regex' => 'El color debe ser un código hexadecimal válido.',
+            'title.required' => __('app.validation.title_required'),
+            'event_date.required' => __('app.validation.event_date_required'),
+            'end_date.after_or_equal' => __('app.validation.end_date_after'),
+            'color.regex' => __('app.validation.color_hex'),
         ];
     }
 }

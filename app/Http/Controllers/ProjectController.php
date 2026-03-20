@@ -85,7 +85,7 @@ final class ProjectController extends Controller
 
         return redirect()
             ->route('projects.show', $project)
-            ->with('success', 'Proyecto creado correctamente.');
+            ->with('success', __('app.flash.project.created'));
     }
 
     public function edit(Project $project): View
@@ -112,7 +112,7 @@ final class ProjectController extends Controller
 
         return redirect()
             ->route('projects.show', $project)
-            ->with('success', 'Proyecto actualizado correctamente.');
+            ->with('success', __('app.flash.project.updated'));
     }
 
     public function destroy(Request $request, Project $project): RedirectResponse|JsonResponse
@@ -127,7 +127,7 @@ final class ProjectController extends Controller
 
         return redirect()
             ->route('projects.index')
-            ->with('success', 'Proyecto eliminado correctamente.');
+            ->with('success', __('app.flash.project.deleted'));
     }
 
     public function archive(Request $request, Project $project): RedirectResponse|JsonResponse
@@ -137,10 +137,10 @@ final class ProjectController extends Controller
         $this->archiveAction->archive($project);
 
         if ($request->wantsJson()) {
-            return response()->json(['message' => 'Proyecto archivado']);
+            return response()->json(['message' => __('app.flash.project.archived')]);
         }
 
-        return back()->with('success', 'Proyecto archivado correctamente.');
+        return back()->with('success', __('app.flash.project.archived'));
     }
 
     public function unarchive(Request $request, Project $project): RedirectResponse|JsonResponse
@@ -150,9 +150,9 @@ final class ProjectController extends Controller
         $this->archiveAction->unarchive($project);
 
         if ($request->wantsJson()) {
-            return response()->json(['message' => 'Proyecto desarchivado']);
+            return response()->json(['message' => __('app.flash.project.unarchived')]);
         }
 
-        return back()->with('success', 'Proyecto desarchivado correctamente.');
+        return back()->with('success', __('app.flash.project.unarchived'));
     }
 }

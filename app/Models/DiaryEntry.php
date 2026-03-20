@@ -126,11 +126,11 @@ final class DiaryEntry extends Model
     public static function getTypes(): array
     {
         return [
-            self::TYPE_NOTE => 'Nota',
-            self::TYPE_PROGRESS => 'Progreso',
-            self::TYPE_MILESTONE => 'Hito',
-            self::TYPE_ISSUE => 'Problema',
-            self::TYPE_SOLUTION => 'Solución',
+            self::TYPE_NOTE => __('app.public.entry_types.note'),
+            self::TYPE_PROGRESS => __('app.public.entry_types.progress'),
+            self::TYPE_MILESTONE => __('app.public.entry_types.milestone'),
+            self::TYPE_ISSUE => __('app.public.entry_types.issue'),
+            self::TYPE_SOLUTION => __('app.public.entry_types.solution'),
         ];
     }
 }

@@ -17,25 +17,28 @@ class TasksRelationManager extends RelationManager
 {
     protected static string $relationship = 'tasks';
 
-    protected static ?string $title = 'Tareas';
-
     protected static ?string $icon = 'heroicon-o-clipboard-document-check';
+
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return __('app.task.plural');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                    ->label('Tarea')
+                    ->label(__('app.task.label'))
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('description')
-                    ->label('Descripción')
+                    ->label(__('app.task.description'))
                     ->rows(2)
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('is_completed')
-                    ->label('Completada')
+                    ->label(__('app.task.is_completed'))
                     ->default(false),
             ]);
     }
@@ -60,29 +63,29 @@ class TasksRelationManager extends RelationManager
                         ]);
                     }),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Tarea')
+                    ->label(__('app.task.label'))
                     ->searchable()
                     ->description(fn ($record) => $record->description)
                     ->wrap()
                     ->extraAttributes(fn ($record) => $record->is_completed ? ['class' => 'line-through opacity-60'] : []),
                 Tables\Columns\TextColumn::make('completed_at')
-                    ->label('Completada')
+                    ->label(__('app.task.is_completed'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
-                    ->placeholder('Pendiente')
+                    ->placeholder(__('app.task.pending'))
                     ->color(fn ($state) => $state ? 'success' : null),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_completed')
-                    ->label('Estado')
-                    ->placeholder('Todas')
-                    ->trueLabel('Completadas')
-                    ->falseLabel('Pendientes'),
+                    ->label(__('app.task.filter_status'))
+                    ->placeholder(__('app.task.filter_all'))
+                    ->trueLabel(__('app.task.filter_completed'))
+                    ->falseLabel(__('app.task.filter_pending')),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Nueva tarea')
-                    ->modalHeading('Añadir tarea'),
+                    ->label(__('app.task.add'))
+                    ->modalHeading(__('app.task.add_heading')),
             ])
             ->actions([
                 Tables\Actions\Action::make('toggle')
@@ -100,13 +103,13 @@ class TasksRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('complete')
-                        ->label('Marcar completadas')
+                        ->label(__('app.task.bulk_complete'))
                         ->icon('heroicon-o-check')
                         ->color('success')
                         ->action(fn ($records) => $records->each->markAsCompleted())
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('incomplete')
-                        ->label('Marcar pendientes')
+                        ->label(__('app.task.bulk_incomplete'))
                         ->icon('heroicon-o-x-mark')
                         ->color('warning')
                         ->action(fn ($records) => $records->each->markAsIncomplete())
@@ -114,8 +117,8 @@ class TasksRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('Sin tareas')
-            ->emptyStateDescription('Añade tareas para hacer seguimiento del progreso del proyecto.')
+            ->emptyStateHeading(__('app.task.empty_heading'))
+            ->emptyStateDescription(__('app.task.empty_desc'))
             ->emptyStateIcon('heroicon-o-clipboard-document-check');
     }
 }

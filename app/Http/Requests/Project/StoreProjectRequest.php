@@ -44,11 +44,11 @@ final class StoreProjectRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'El título es obligatorio.',
-            'title.max' => 'El título no puede superar los 255 caracteres.',
-            'person_id.exists' => 'La persona seleccionada no existe.',
-            'status_id.exists' => 'El estado seleccionado no existe.',
-            'tag_ids.*.exists' => 'Una de las etiquetas seleccionadas no existe.',
+            'title.required' => __('app.validation.title_required'),
+            'title.max' => __('app.validation.title_max'),
+            'person_id.exists' => __('app.validation.person_not_found'),
+            'status_id.exists' => __('app.validation.status_not_found'),
+            'tag_ids.*.exists' => __('app.validation.tag_not_found'),
         ];
     }
 }
