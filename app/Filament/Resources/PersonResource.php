@@ -24,48 +24,54 @@ class PersonResource extends Resource
         return __('app.navigation.people');
     }
 
-    protected static ?string $modelLabel = 'Persona';
+    public static function getModelLabel(): string
+    {
+        return __('app.person.label');
+    }
 
-    protected static ?string $pluralModelLabel = 'Personas';
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.person.plural');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Información personal')
+                Forms\Components\Section::make(__('app.person.section_personal'))
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Nombre')
+                            ->label(__('app.person.name'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
-                            ->label('Correo electrónico')
+                            ->label(__('app.person.email'))
                             ->email()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
-                            ->label('Teléfono')
+                            ->label(__('app.person.phone'))
                             ->tel()
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('birthday')
-                            ->label('Cumpleaños'),
+                            ->label(__('app.person.birthday')),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Recordatorio de cumpleaños')
+                Forms\Components\Section::make(__('app.person.section_birthday_reminder'))
                     ->schema([
                         Forms\Components\Toggle::make('birthday_reminder')
-                            ->label('Activar recordatorio'),
+                            ->label(__('app.person.birthday_reminder')),
                         Forms\Components\TextInput::make('reminder_days_before')
-                            ->label('Días de antelación')
+                            ->label(__('app.person.reminder_days_before'))
                             ->numeric()
                             ->default(7)
                             ->minValue(1)
                             ->maxValue(30),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Notas')
+                Forms\Components\Section::make(__('app.person.notes'))
                     ->schema([
                         Forms\Components\Textarea::make('notes')
-                            ->label('Notas')
+                            ->label(__('app.person.notes'))
                             ->columnSpanFull(),
                     ]),
 
@@ -79,31 +85,31 @@ class PersonResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.person.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('Correo')
+                    ->label(__('app.person.email_short'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label('Teléfono')
+                    ->label(__('app.person.phone'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birthday')
-                    ->label('Cumpleaños')
+                    ->label(__('app.person.birthday'))
                     ->date('d/m')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('birthday_reminder')
-                    ->label('Recordatorio')
+                    ->label(__('app.person.birthday_reminder'))
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Creado')
+                    ->label(__('app.common.created_at'))
                     ->dateTime('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('birthday_reminder')
-                    ->label('Con recordatorio'),
+                    ->label(__('app.person.filter_with_reminder')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

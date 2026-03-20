@@ -20,6 +20,7 @@ return [
         'settings' => 'Settings',
         'workshop' => 'Workshop',
         'gallery' => 'Gallery',
+        'gallery_title' => 'Project Gallery',
     ],
 
     // Projects
@@ -111,9 +112,15 @@ return [
         'plural' => 'People',
         'name' => 'Name',
         'email' => 'Email',
+        'email_short' => 'Email',
         'phone' => 'Phone',
         'birthday' => 'Birthday',
         'notes' => 'Notes',
+        'birthday_reminder' => 'Enable reminder',
+        'reminder_days_before' => 'Days in advance',
+        'section_personal' => 'Personal Information',
+        'section_birthday_reminder' => 'Birthday Reminder',
+        'filter_with_reminder' => 'With reminder',
         'relationship' => 'Relationship',
         'relationships' => [
             'family' => 'Family',
@@ -143,7 +150,10 @@ return [
         'color' => 'Color',
         'order' => 'Order',
         'is_default' => 'Default',
+        'is_default_helper' => 'Only one status can be the default',
         'is_completed' => 'Completed',
+        'is_completed_label' => 'Mark as completed',
+        'is_completed_helper' => 'Projects with this status are considered finished',
     ],
 
     // Calendar Events

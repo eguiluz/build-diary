@@ -24,39 +24,45 @@ class ProjectStatusResource extends Resource
         return __('app.navigation.settings');
     }
 
-    protected static ?string $modelLabel = 'Estado';
+    public static function getModelLabel(): string
+    {
+        return __('app.project_status.label');
+    }
 
-    protected static ?string $pluralModelLabel = 'Estados de proyecto';
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.project_status.plural');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.project_status.name'))
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
-                    ->label('Slug')
+                    ->label(__('app.project_status.slug'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
                 Forms\Components\ColorPicker::make('color')
-                    ->label('Color')
+                    ->label(__('app.project_status.color'))
                     ->required()
                     ->default('#6B7280'),
                 Forms\Components\TextInput::make('order')
-                    ->label('Orden')
+                    ->label(__('app.project_status.order'))
                     ->numeric()
                     ->default(0),
                 Forms\Components\Toggle::make('is_default')
-                    ->label('Por defecto')
-                    ->helperText('Solo puede haber un estado por defecto'),
+                    ->label(__('app.project_status.is_default'))
+                    ->helperText(__('app.project_status.is_default_helper')),
                 Forms\Components\Toggle::make('is_completed')
-                    ->label('Marca como completado')
-                    ->helperText('Los proyectos con este estado se consideran finalizados'),
+                    ->label(__('app.project_status.is_completed_label'))
+                    ->helperText(__('app.project_status.is_completed_helper')),
             ]);
     }
 
@@ -65,20 +71,20 @@ class ProjectStatusResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.project_status.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ColorColumn::make('color')
-                    ->label('Color'),
+                    ->label(__('app.project_status.color')),
                 Tables\Columns\TextColumn::make('order')
-                    ->label('Orden')
+                    ->label(__('app.project_status.order'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_default')
-                    ->label('Por defecto')
+                    ->label(__('app.project_status.is_default'))
                     ->boolean(),
                 Tables\Columns\IconColumn::make('is_completed')
-                    ->label('Completado')
+                    ->label(__('app.project_status.is_completed'))
                     ->boolean(),
             ])
             ->filters([

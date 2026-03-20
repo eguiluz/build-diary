@@ -19,7 +19,10 @@ class Gallery extends Page
         return __('app.navigation.gallery');
     }
 
-    protected static ?string $title = 'Galería de proyectos';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('app.navigation.gallery_title');
+    }
 
     protected static ?int $navigationSort = 5;
 

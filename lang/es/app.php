@@ -20,6 +20,7 @@ return [
         'settings' => 'Configuración',
         'workshop' => 'Taller',
         'gallery' => 'Galería',
+        'gallery_title' => 'Galería de proyectos',
     ],
 
     // Projects
@@ -111,9 +112,15 @@ return [
         'plural' => 'Personas',
         'name' => 'Nombre',
         'email' => 'Correo electrónico',
+        'email_short' => 'Correo',
         'phone' => 'Teléfono',
         'birthday' => 'Cumpleaños',
         'notes' => 'Notas',
+        'birthday_reminder' => 'Activar recordatorio',
+        'reminder_days_before' => 'Días de antelación',
+        'section_personal' => 'Información personal',
+        'section_birthday_reminder' => 'Recordatorio de cumpleaños',
+        'filter_with_reminder' => 'Con recordatorio',
         'relationship' => 'Relación',
         'relationships' => [
             'family' => 'Familia',
@@ -143,7 +150,10 @@ return [
         'color' => 'Color',
         'order' => 'Orden',
         'is_default' => 'Por defecto',
+        'is_default_helper' => 'Solo puede haber un estado por defecto',
         'is_completed' => 'Completado',
+        'is_completed_label' => 'Marca como completado',
+        'is_completed_helper' => 'Los proyectos con este estado se consideran finalizados',
     ],
 
     // Calendar Events

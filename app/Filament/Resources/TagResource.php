@@ -25,27 +25,33 @@ class TagResource extends Resource
         return __('app.navigation.settings');
     }
 
-    protected static ?string $modelLabel = 'Etiqueta';
+    public static function getModelLabel(): string
+    {
+        return __('app.tag.label');
+    }
 
-    protected static ?string $pluralModelLabel = 'Etiquetas';
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.tag.plural');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.tag.name'))
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
-                    ->label('Slug')
+                    ->label(__('app.tag.slug'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
                 Forms\Components\ColorPicker::make('color')
-                    ->label('Color')
+                    ->label(__('app.tag.color'))
                     ->required()
                     ->default('#3B82F6'),
                 Forms\Components\Hidden::make('user_id')
@@ -58,13 +64,13 @@ class TagResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.tag.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ColorColumn::make('color')
-                    ->label('Color'),
+                    ->label(__('app.tag.color')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Creado')
+                    ->label(__('app.common.created_at'))
                     ->dateTime('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

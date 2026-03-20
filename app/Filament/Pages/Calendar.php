@@ -23,7 +23,10 @@ class Calendar extends Page
         return __('app.navigation.calendar');
     }
 
-    protected static ?string $title = 'Calendario';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('app.navigation.calendar');
+    }
 
     protected static ?int $navigationSort = 2;
 
