@@ -31,8 +31,8 @@ class CalendarWidget extends FullCalendarWidget
     public function config(): array
     {
         return [
-            'firstDay' => 1, // Lunes
-            'locale' => 'es',
+            'firstDay' => 1,
+            'locale' => app()->getLocale(),
             'headerToolbar' => [
                 'left' => 'prev,next today',
                 'center' => 'title',

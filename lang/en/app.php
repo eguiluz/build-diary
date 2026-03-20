@@ -383,6 +383,20 @@ return [
         'birthdays' => [
             'heading' => 'Upcoming birthdays',
         ],
+        'stats' => [
+            'active_projects' => 'Active projects',
+            'active_projects_desc' => 'In progress',
+            'total_projects' => 'Total projects',
+            'total_projects_desc' => 'All projects',
+            'people' => 'People',
+            'people_desc' => 'Registered contacts',
+            'diary_entries' => 'Diary entries',
+            'diary_entries_desc' => 'Total records',
+            'upcoming_events' => 'Upcoming events',
+            'upcoming_events_desc' => 'Next 7 days',
+            'hours_worked' => 'Hours worked',
+            'hours_worked_desc' => 'Total logged',
+        ],
     ],
 
     // Filament admin views

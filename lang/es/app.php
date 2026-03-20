@@ -383,6 +383,20 @@ return [
         'birthdays' => [
             'heading' => 'Próximos cumpleaños',
         ],
+        'stats' => [
+            'active_projects' => 'Proyectos activos',
+            'active_projects_desc' => 'En progreso',
+            'total_projects' => 'Proyectos totales',
+            'total_projects_desc' => 'Todos los proyectos',
+            'people' => 'Personas',
+            'people_desc' => 'Contactos registrados',
+            'diary_entries' => 'Entradas de diario',
+            'diary_entries_desc' => 'Total de registros',
+            'upcoming_events' => 'Eventos próximos',
+            'upcoming_events_desc' => 'Próximos 7 días',
+            'hours_worked' => 'Horas trabajadas',
+            'hours_worked_desc' => 'Total registrado',
+        ],
     ],
 
     // Filament admin views
