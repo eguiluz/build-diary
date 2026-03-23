@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $priority
  * @property bool $is_archived
  * @property bool $is_public
+ * @property string $theme
  * @property array<string, mixed>|null $metadata
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -69,6 +70,7 @@ final class Project extends Model
         'priority',
         'is_archived',
         'is_public',
+        'theme',
         'metadata',
     ];
 
@@ -95,6 +97,34 @@ final class Project extends Model
     public const REASON_DEDICATION = 'dedication';
 
     public const REASON_OTHER = 'other';
+
+    // ========== Themes ==========
+
+    public const THEME_DEFAULT = 'default';
+
+    public const THEME_MINIMAL = 'minimal';
+
+    public const THEME_WORKSHOP = 'workshop';
+
+    public const THEME_BLUEPRINT = 'blueprint';
+
+    public const THEME_MADERA = 'madera';
+
+    /**
+     * @return array<string, string>
+     */
+    public static function themes(): array
+    {
+        return [
+            self::THEME_DEFAULT => __('app.project.themes.default'),
+            self::THEME_MINIMAL => __('app.project.themes.minimal'),
+            self::THEME_WORKSHOP => __('app.project.themes.workshop'),
+            self::THEME_BLUEPRINT => __('app.project.themes.blueprint'),
+            self::THEME_MADERA => __('app.project.themes.madera'),
+        ];
+    }
+
+    // ========== Priorities ==========
 
     public const PRIORITY_LOW = 1;
 

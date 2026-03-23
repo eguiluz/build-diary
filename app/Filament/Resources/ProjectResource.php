@@ -130,6 +130,10 @@ class ProjectResource extends Resource
                             ->label(__('app.project.is_public'))
                             ->helperText(__('app.project.is_public_helper'))
                             ->live(),
+                        Forms\Components\Select::make('theme')
+                            ->label(__('app.project.theme'))
+                            ->options(fn () => Project::themes())
+                            ->default(Project::THEME_DEFAULT),
                         Forms\Components\Placeholder::make('public_url')
                             ->label(__('app.project.public_url'))
                             ->content(fn ($record) => $record?->slug ? url('/p/'.$record->slug) : '-')
