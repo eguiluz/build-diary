@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Models\Person;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\ProjectExportService;
@@ -79,7 +80,31 @@ class ProjectResource extends Resource
                             ->relationship('person', 'name')
                             ->searchable()
                             ->preload()
-                            ->live(),
+                            ->live()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->label(__('app.person.name'))
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->label(__('app.person.email'))
+                                    ->email()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('phone')
+                                    ->label(__('app.person.phone'))
+                                    ->maxLength(50),
+                            ])
+                            ->createOptionUsing(function (array $data): int {
+                                /** @var User $user */
+                                $user = Auth::user();
+
+                                return Person::create([
+                                    'user_id' => $user->id,
+                                    'name' => $data['name'],
+                                    'email' => $data['email'] ?? null,
+                                    'phone' => $data['phone'] ?? null,
+                                ])->id;
+                            }),
                         Forms\Components\Select::make('person_reason')
                             ->label(__('app.project.person_reason'))
                             ->options(Project::personReasons())
