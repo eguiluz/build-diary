@@ -15,7 +15,7 @@ class UpcomingBirthdays extends BaseWidget
 
     protected static ?int $sort = 3;
 
-    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    public function getTableHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
         return __('app.widgets.birthdays.heading');
     }

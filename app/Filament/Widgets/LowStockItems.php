@@ -17,7 +17,7 @@ class LowStockItems extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    public function getTableHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
         return __('app.widgets.low_stock.heading');
     }

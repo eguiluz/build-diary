@@ -15,7 +15,7 @@ class RecentProjects extends BaseWidget
 
     protected static ?int $sort = 2;
 
-    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    public function getTableHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
     {
         return __('app.widgets.recent_projects.heading');
     }
