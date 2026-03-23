@@ -600,6 +600,15 @@ return [
         'tag_not_found' => 'One of the selected tags does not exist.',
     ],
 
+    // Project links
+    'project_link' => [
+        'section_title' => 'Links',
+        'title' => 'Title',
+        'url' => 'URL',
+        'description' => 'Description',
+        'create' => 'Add link',
+    ],
+
     // Project files
     'project_file' => [
         'label' => 'File',

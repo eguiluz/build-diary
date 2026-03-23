@@ -12,25 +12,28 @@ class LinksRelationManager extends RelationManager
 {
     protected static string $relationship = 'links';
 
-    protected static ?string $title = 'Enlaces';
-
     protected static ?string $icon = 'heroicon-o-link';
+
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return __('app.project_link.section_title');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                    ->label('Título')
+                    ->label(__('app.project_link.title'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('url')
-                    ->label('URL')
+                    ->label(__('app.project_link.url'))
                     ->required()
                     ->url()
                     ->maxLength(2048),
                 Forms\Components\Textarea::make('description')
-                    ->label('Descripción')
+                    ->label(__('app.project_link.description'))
                     ->columnSpanFull(),
             ]);
     }
@@ -41,10 +44,10 @@ class LinksRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Título')
+                    ->label(__('app.project_link.title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('url')
-                    ->label('URL')
+                    ->label(__('app.project_link.url'))
                     ->url(fn ($record) => $record->url)
                     ->openUrlInNewTab()
                     ->limit(50),
@@ -53,7 +56,8 @@ class LinksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label(__('app.project_link.create')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
