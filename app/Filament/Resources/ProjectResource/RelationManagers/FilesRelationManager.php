@@ -13,16 +13,19 @@ class FilesRelationManager extends RelationManager
 {
     protected static string $relationship = 'files';
 
-    protected static ?string $title = 'Archivos';
-
     protected static ?string $icon = 'heroicon-o-paper-clip';
+
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return __('app.project_file.section_title');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\FileUpload::make('path')
-                    ->label('Archivo')
+                    ->label(__('app.project_file.file'))
                     ->required()
                     ->preserveFilenames()
                     ->directory('project-files')
@@ -39,7 +42,7 @@ class FilesRelationManager extends RelationManager
                     })
                     ->live(),
                 Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.project_file.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Hidden::make('original_name'),
@@ -48,7 +51,7 @@ class FilesRelationManager extends RelationManager
                 Forms\Components\Hidden::make('type'),
                 Forms\Components\Hidden::make('disk')->default('public'),
                 Forms\Components\Textarea::make('description')
-                    ->label('Descripción')
+                    ->label(__('app.project_file.description'))
                     ->columnSpanFull(),
             ]);
     }
@@ -76,15 +79,15 @@ class FilesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label(__('app.project_file.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('mime_type')
-                    ->label('Tipo'),
+                    ->label(__('app.project_file.type')),
                 Tables\Columns\TextColumn::make('size')
-                    ->label('Tamaño')
+                    ->label(__('app.project_file.size'))
                     ->formatStateUsing(fn ($state) => $state ? number_format($state / 1024, 2).' KB' : '-'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Subido')
+                    ->label(__('app.project_file.uploaded_at'))
                     ->dateTime()
                     ->sortable(),
             ])
@@ -92,7 +95,8 @@ class FilesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label(__('app.project_file.create')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -600,6 +600,20 @@ return [
         'tag_not_found' => 'One of the selected tags does not exist.',
     ],
 
+    // Project files
+    'project_file' => [
+        'label' => 'File',
+        'plural' => 'Files',
+        'section_title' => 'Files',
+        'file' => 'File',
+        'name' => 'Name',
+        'description' => 'Description',
+        'type' => 'Type',
+        'size' => 'Size',
+        'uploaded_at' => 'Uploaded',
+        'create' => 'Attach file',
+    ],
+
     // Tasks
     'task' => [
         'label' => 'Task',
