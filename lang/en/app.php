@@ -47,6 +47,8 @@ return [
             'workshop' => 'Workshop',
             'blueprint' => 'Blueprint (3D Printing)',
             'madera' => 'Wood',
+            'postindustrial' => 'Post-industrial',
+            'arquitectura' => 'Architectural',
         ],
         'metadata' => 'Metadata',
         'person' => 'Associated Person',

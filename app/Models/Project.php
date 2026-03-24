@@ -110,6 +110,10 @@ final class Project extends Model
 
     public const THEME_MADERA = 'madera';
 
+    public const THEME_POSTINDUSTRIAL = 'postindustrial';
+
+    public const THEME_ARQUITECTURA = 'arquitectura';
+
     /**
      * @return array<string, string>
      */
@@ -121,6 +125,8 @@ final class Project extends Model
             self::THEME_WORKSHOP => __('app.project.themes.workshop'),
             self::THEME_BLUEPRINT => __('app.project.themes.blueprint'),
             self::THEME_MADERA => __('app.project.themes.madera'),
+            self::THEME_POSTINDUSTRIAL => __('app.project.themes.postindustrial'),
+            self::THEME_ARQUITECTURA => __('app.project.themes.arquitectura'),
         ];
     }
 
