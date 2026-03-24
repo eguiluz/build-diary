@@ -9,6 +9,7 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectFileController;
 use App\Http\Controllers\ProjectLinkController;
+use App\Http\Controllers\PublicBookController;
 use App\Http\Controllers\PublicGalleryController;
 use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\TagController;
@@ -26,6 +27,9 @@ Route::get('/p/{slug}/zip', [PublicProjectController::class, 'zip'])->name('publ
 
 // Public gallery
 Route::get('/g/{user}', [PublicGalleryController::class, 'show'])->name('public.gallery');
+
+// Public book (PDF)
+Route::get('/b/{user}', [PublicBookController::class, 'pdf'])->name('public.book');
 
 // Protected routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
