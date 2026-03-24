@@ -4,556 +4,752 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>{{ __('app.public.book_title', ['name' => $user->name]) }}</title>
+    <title>{{ $user->name }} — {{ __('app.public.book_title') }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /*
+         * @page handles ONLY top/bottom margins — DomPDF applies these reliably.
+         * Horizontal margins come from .content-wrapper padding (see below).
+         *
+         * A4 = 210 × 297 mm
+         * Vertical content area: 297 - 22 - 28 = 247 mm
+         * Horizontal content area: 210 - 26 - 20 = 164 mm  (via .content-wrapper)
+         */
+        @page { margin: 22mm 0 28mm 0; }
+
         body {
-            font-family: 'DejaVu Sans', sans-serif;
-            font-size: 11px;
-            line-height: 1.6;
-            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            font-family: 'DejaVu Serif', serif;
+            font-size: 10.5px;
+            line-height: 1.75;
+            color: #1a1207;
+            background: #fff;
         }
 
-        /* ===== COVER ===== */
-        .cover {
+        /*
+         * All non-cover content lives here.
+         * left: 26mm, right: 20mm — simulates binding margin vs trim margin.
+         */
+        .content-wrapper {
+            padding: 0 20mm 0 26mm;
+        }
+
+        /* =====================================================
+           RUNNING HEADER
+           position:fixed is relative to the @page content box.
+           @page left = 0, right = 0, so left:0/right:0 = physical page edges.
+           top: -17mm  →  22mm(top margin) - 17mm = 5mm from physical top.
+           ===================================================== */
+        #running-header {
+            position: fixed;
+            top: -17mm;
+            left: 0;
+            right: 0;
+            height: 10mm;
+            padding: 4mm 20mm 0 26mm;
+            border-bottom: 0.5px solid #c4a882;
+            background: #fff;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7.5px;
+            color: #9c8060;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        #running-header .rh-left  { float: left; }
+        #running-header .rh-right { float: right; }
+        #running-header .rh-clear { clear: both; }
+
+        /* =====================================================
+           RUNNING FOOTER
+           bottom: -23mm → 28mm(bottom margin) - 23mm = 5mm from physical bottom.
+           ===================================================== */
+        #running-footer {
+            position: fixed;
+            bottom: -23mm;
+            left: 0;
+            right: 0;
+            height: 10mm;
+            padding: 3mm 20mm 0 26mm;
+            border-top: 0.5px solid #c4a882;
+            background: #fff;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7.5px;
+            color: #9c8060;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* =====================================================
+           COVER
+           Full-bleed (body has no padding).
+           Height = vertical content area: 247mm.
+           ===================================================== */
+        .cover-table {
             width: 100%;
-            height: 100%;
-            min-height: 297mm;
-            background-color: #0f172a;
-            padding: 0;
-            position: relative;
+            height: 247mm;
+            background: #1c1409;
+            border-collapse: collapse;
             page-break-after: always;
         }
-
-        .cover-top-bar {
-            background: #f59e0b;
-            height: 8px;
+        .cover-outer-td {
+            padding: 8mm;
+            vertical-align: top;
+            border: 1.5px solid #6b4f2e;
+        }
+        .cover-inner-table {
             width: 100%;
+            height: 225mm;
+            border-collapse: collapse;
+            border: 0.5px solid #40301a;
         }
-
-        .cover-body {
-            padding: 60px 50px;
+        .cover-inner-td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10mm 18mm;
         }
-
-        .cover-logo {
-            color: #f59e0b;
-            font-size: 13px;
+        .cover-publisher {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #c4a882;
             letter-spacing: 4px;
             text-transform: uppercase;
-            margin-bottom: 80px;
+            margin-bottom: 6mm;
         }
-
+        .cover-rule {
+            border: none;
+            border-top: 0.5px solid #6b4f2e;
+            width: 55%;
+            margin: 0 auto 6mm;
+        }
+        .cover-rule-narrow {
+            border: none;
+            border-top: 0.5px solid #6b4f2e;
+            width: 32%;
+            margin: 4mm auto;
+        }
         .cover-title {
-            font-size: 42px;
-            color: #ffffff;
-            font-weight: bold;
-            line-height: 1.15;
-            margin-bottom: 16px;
-        }
-
-        .cover-subtitle {
-            font-size: 16px;
-            color: #94a3b8;
-            margin-bottom: 60px;
-        }
-
-        .cover-divider {
-            width: 60px;
-            height: 3px;
-            background: #f59e0b;
-            margin-bottom: 40px;
-        }
-
-        .cover-meta {
-            color: #64748b;
-            font-size: 12px;
-            line-height: 2;
-        }
-
-        .cover-meta strong {
-            color: #cbd5e1;
-        }
-
-        .cover-bottom {
-            position: absolute;
-            bottom: 40px;
-            left: 50px;
-            right: 50px;
-            border-top: 1px solid #1e293b;
-            padding-top: 20px;
-        }
-
-        .cover-bottom-text {
-            color: #475569;
-            font-size: 10px;
-            letter-spacing: 1px;
-        }
-
-        /* ===== TABLE OF CONTENTS ===== */
-        .toc {
-            padding: 50px 50px 40px;
-            page-break-after: always;
-        }
-
-        .toc-heading {
-            font-size: 24px;
-            color: #0f172a;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .toc-subtitle {
-            font-size: 11px;
-            color: #94a3b8;
-            margin-bottom: 35px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f59e0b;
-        }
-
-        .toc-item {
-            display: table;
-            width: 100%;
-            padding: 10px 0;
-            border-bottom: 1px dotted #e2e8f0;
-        }
-
-        .toc-item-number {
-            display: table-cell;
-            width: 36px;
-            font-size: 11px;
-            color: #f59e0b;
-            font-weight: bold;
-            vertical-align: middle;
-        }
-
-        .toc-item-body {
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .toc-item-title {
-            font-size: 12px;
-            color: #1e293b;
-            font-weight: 600;
-        }
-
-        .toc-item-meta {
-            font-size: 10px;
-            color: #94a3b8;
-            margin-top: 2px;
-        }
-
-        .toc-item-status {
-            display: table-cell;
-            width: 80px;
-            text-align: right;
-            vertical-align: middle;
-        }
-
-        .toc-status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 9px;
-            font-weight: 600;
-        }
-
-        /* ===== CHAPTER ===== */
-        .chapter {
-            padding: 0;
-            page-break-before: always;
-        }
-
-        .chapter-header {
-            padding: 40px 50px 30px;
-            border-bottom: 2px solid #f59e0b;
-            margin-bottom: 30px;
-        }
-
-        .chapter-number {
-            font-size: 10px;
-            color: #f59e0b;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .chapter-title {
-            font-size: 28px;
-            color: #0f172a;
+            font-size: 30px;
+            color: #f5e6c8;
             font-weight: bold;
             line-height: 1.2;
-            margin-bottom: 15px;
+            margin-bottom: 3mm;
+            letter-spacing: 1px;
+        }
+        .cover-ornament {
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #c4a882;
+            font-size: 13px;
+            margin: 3mm 0;
+            letter-spacing: 8px;
+        }
+        .cover-author {
+            font-size: 13px;
+            color: #c4a882;
+            letter-spacing: 3px;
+            font-style: italic;
+            margin: 3mm 0;
+        }
+        .cover-meta {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 8px;
+            color: #6b4f2e;
+            line-height: 2.2;
+            letter-spacing: 0.5px;
+            margin-top: 4mm;
+        }
+        .cover-url {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #40301a;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 7mm;
         }
 
-        .chapter-badges {
-            margin-bottom: 12px;
+        /* =====================================================
+           TABLE OF CONTENTS
+           ===================================================== */
+        .toc-page { page-break-after: always; padding-top: 4mm; }
+
+        .toc-header { text-align: center; margin-bottom: 5mm; }
+        .toc-label {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #9c8060;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 2mm;
+        }
+        .toc-title {
+            font-size: 22px;
+            color: #1c1409;
+            font-weight: bold;
+            margin-bottom: 1mm;
+        }
+        .toc-ornament {
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #c4a882;
+            font-size: 11px;
+            letter-spacing: 6px;
+            margin-bottom: 4mm;
+        }
+        .toc-rule {
+            border: none;
+            border-top: 1px solid #d4b896;
+            margin-bottom: 4mm;
+        }
+        .toc-table { width: 100%; border-collapse: collapse; }
+        .toc-table tr { border-bottom: 1px dotted #e8d9c4; }
+        .toc-table td { padding: 5px 4px; vertical-align: middle; }
+        .toc-num {
+            width: 28px;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 8px;
+            color: #9c8060;
+        }
+        .toc-entry-title { font-size: 10.5px; color: #2c1e0a; font-weight: bold; }
+        .toc-entry-sub {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 8px;
+            color: #9c8060;
+            font-style: italic;
+        }
+        .toc-status { width: 76px; text-align: right; }
+        .toc-badge {
+            font-family: 'DejaVu Sans', sans-serif;
+            display: inline-block;
+            padding: 1px 7px;
+            border-radius: 8px;
+            font-size: 7.5px;
+            font-weight: 600;
         }
 
+        /* =====================================================
+           CHAPTER
+           ===================================================== */
+        .chapter { page-break-before: always; }
+
+        .chapter-opening {
+            text-align: center;
+            padding: 8mm 0 7mm;
+            border-bottom: 1px solid #d4b896;
+            margin-bottom: 7mm;
+        }
+        .chapter-label {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #9c8060;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 2mm;
+        }
+        .chapter-roman {
+            font-size: 26px;
+            color: #c4a882;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 3mm;
+        }
+        .chapter-rule-short {
+            border: none;
+            border-top: 1px solid #c4a882;
+            width: 36px;
+            margin: 0 auto 3mm;
+        }
+        .chapter-title {
+            font-size: 18px;
+            color: #1c1409;
+            font-weight: bold;
+            line-height: 1.25;
+            margin-bottom: 2mm;
+        }
+        .chapter-ornament {
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #c4a882;
+            font-size: 10px;
+            letter-spacing: 5px;
+            margin: 2mm 0;
+        }
+        .chapter-badges { text-align: center; margin-top: 2mm; }
         .badge {
             display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-right: 6px;
-        }
-
-        .chapter-dates {
-            font-size: 10px;
-            color: #64748b;
-        }
-
-        .chapter-dates span {
-            margin-right: 16px;
-        }
-
-        /* ===== CHAPTER BODY ===== */
-        .chapter-body {
-            padding: 0 50px 50px;
-        }
-
-        .section {
-            margin-bottom: 28px;
-        }
-
-        .section-title {
-            font-size: 15px;
-            color: #0f172a;
-            font-weight: bold;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 6px;
-            margin-bottom: 14px;
-        }
-
-        .tags { margin-bottom: 14px; }
-
-        .tag {
-            display: inline-block;
+            font-family: 'DejaVu Sans', sans-serif;
             padding: 2px 8px;
             border-radius: 10px;
-            font-size: 9px;
-            margin-right: 4px;
+            font-size: 8px;
+            font-weight: 600;
+            margin: 1px 2px;
+        }
+        .chapter-dates {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 8.5px;
+            color: #9c8060;
+            text-align: center;
+            margin-top: 2mm;
+            font-style: italic;
         }
 
-        /* Description */
-        .description { line-height: 1.75; color: #334155; }
-        .description h2 { font-size: 14px; color: #1e293b; margin: 14px 0 8px; }
-        .description h3 { font-size: 12px; color: #334155; margin: 10px 0 6px; }
-        .description p { margin-bottom: 8px; }
-        .description ul, .description ol { margin-left: 16px; margin-bottom: 8px; }
-        .description li { margin-bottom: 3px; }
-        .description strong { font-weight: 600; }
-        .description em { font-style: italic; }
-        .description blockquote { border-left: 3px solid #f59e0b; padding-left: 12px; color: #64748b; font-style: italic; margin: 8px 0; }
-        .description code { background: #f1f5f9; padding: 1px 4px; font-size: 10px; border-radius: 2px; }
+        /* =====================================================
+           SECTIONS
+           ===================================================== */
+        .section { margin-bottom: 7mm; }
 
-        /* Gallery */
-        .gallery-grid { width: 100%; }
-        .gallery-item {
-            display: inline-block;
-            width: 48%;
-            margin-right: 2%;
-            margin-bottom: 12px;
+        .section-heading {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #9c8060;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            padding-top: 4mm;
+            margin-bottom: 2mm;
+        }
+        .section-rule {
+            border: none;
+            border-top: 0.5px solid #d4b896;
+            margin-bottom: 4mm;
+        }
+
+        /* =====================================================
+           DESCRIPTION
+           ===================================================== */
+        .description { line-height: 1.78; color: #2c1e0a; text-align: justify; }
+        .description p { margin-bottom: 5px; text-indent: 1em; }
+        .description p:first-child { text-indent: 0; }
+        .description h2 { font-size: 13px; color: #1c1409; margin: 10px 0 5px; }
+        .description h3 { font-size: 11px; color: #2c1e0a; margin: 8px 0 4px; }
+        .description ul, .description ol { margin-left: 16px; margin-bottom: 6px; }
+        .description li { margin-bottom: 2px; }
+        .description strong { font-weight: bold; }
+        .description em { font-style: italic; }
+        .description blockquote {
+            border-left: 2px solid #c4a882;
+            padding-left: 10px;
+            color: #7a6040;
+            font-style: italic;
+            margin: 6px 0 6px 4px;
+        }
+        .description code {
+            font-family: 'DejaVu Sans Mono', monospace;
+            font-size: 9px;
+            background: #f5ede0;
+            padding: 1px 3px;
+        }
+
+        /* =====================================================
+           GALLERY
+           ===================================================== */
+        .gallery-table { width: 100%; border-collapse: collapse; }
+        .gallery-td { width: 50%; padding: 3px; vertical-align: top; }
+        .gallery-td img { width: 100%; height: auto; border: 0.5px solid #d4b896; }
+        .gallery-caption {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7.5px;
+            color: #9c8060;
+            text-align: center;
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        /* =====================================================
+           DEDICATED TO
+           ===================================================== */
+        .dedicated {
+            text-align: center;
+            padding: 4mm 8mm;
+            margin-bottom: 6mm;
+            border-top: 0.5px solid #d4b896;
+            border-bottom: 0.5px solid #d4b896;
+        }
+        .dedicated-label {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7.5px;
+            color: #9c8060;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1mm;
+        }
+        .dedicated-name { font-size: 13px; color: #2c1e0a; font-style: italic; }
+        .dedicated-reason {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 8px;
+            color: #9c8060;
+            margin-top: 1mm;
+        }
+
+        /* =====================================================
+           CHECKLIST
+           ===================================================== */
+        .checklist-summary {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 8.5px;
+            color: #7a6040;
+            margin-bottom: 2mm;
+            text-align: center;
+            font-style: italic;
+        }
+        .progress-wrap { background: #ece0d0; height: 5px; margin-bottom: 3mm; }
+        .progress-fill  { height: 100%; }
+
+        .task-table { width: 100%; border-collapse: collapse; }
+        .task-table tr { border-bottom: 0.5px solid #ece0d0; }
+        .task-table tr:last-child { border-bottom: none; }
+        .task-check {
+            width: 14px;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 9px;
+            color: #9c8060;
+            vertical-align: top;
+            padding: 4px 4px 4px 0;
+        }
+        .task-text {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 9.5px;
+            color: #2c1e0a;
+            padding: 4px 0;
             vertical-align: top;
         }
-        .gallery-item:nth-child(2n) { margin-right: 0; }
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            border: 1px solid #e2e8f0;
-        }
-        .gallery-caption { font-size: 9px; color: #94a3b8; text-align: center; margin-top: 3px; }
+        .task-done-text { text-decoration: line-through; color: #b0a090; }
 
-        /* Dedicated to */
-        .dedicated {
-            display: table;
-            width: 100%;
-            background: #fffbeb;
-            border-left: 3px solid #f59e0b;
-            padding: 10px 14px;
-            margin-bottom: 20px;
-        }
-        .dedicated-avatar {
-            display: table-cell;
-            width: 36px;
-            vertical-align: middle;
-        }
-        .dedicated-avatar-inner {
-            width: 30px;
-            height: 30px;
-            background: #f59e0b;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .dedicated-text { display: table-cell; vertical-align: middle; }
-        .dedicated-label { font-size: 9px; color: #92400e; text-transform: uppercase; letter-spacing: 1px; }
-        .dedicated-name { font-size: 13px; font-weight: 600; color: #78350f; }
-
-        /* Checklist */
-        .checklist-progress {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-        }
-        .progress-bar {
-            background: #e2e8f0;
-            height: 6px;
-            margin-top: 6px;
-            overflow: hidden;
-        }
-        .progress-bar-fill { height: 100%; }
-        .task-item { padding: 6px 0; border-bottom: 1px solid #f8fafc; font-size: 10px; }
-        .task-item:last-child { border-bottom: none; }
-        .task-completed { text-decoration: line-through; color: #94a3b8; }
-
-        /* Budget */
-        .budget-summary { display: table; width: 100%; margin-bottom: 16px; }
-        .budget-card {
-            display: table-cell;
+        /* =====================================================
+           BUDGET
+           ===================================================== */
+        .budget-summary-table { width: 100%; border-collapse: collapse; margin-bottom: 3mm; }
+        .budget-cell {
             width: 33.33%;
-            padding: 10px 14px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
             text-align: center;
+            padding: 4mm 2mm;
+            border: 0.5px solid #d4b896;
         }
-        .budget-card-label { font-size: 9px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-        .budget-card-value { font-size: 15px; font-weight: bold; }
+        .budget-label {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #9c8060;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .budget-value { font-size: 13px; font-weight: bold; color: #2c1e0a; }
 
-        .expense-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 10px; }
-        .expense-table th { background: #f1f5f9; padding: 6px 8px; text-align: left; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
-        .expense-table td { padding: 6px 8px; border-bottom: 1px solid #f8fafc; }
+        .expense-table { width: 100%; border-collapse: collapse; font-family: 'DejaVu Sans', sans-serif; font-size: 8.5px; }
+        .expense-table th {
+            padding: 4px 6px;
+            text-align: left;
+            font-weight: 600;
+            color: #7a6040;
+            font-size: 7.5px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #c4a882;
+        }
+        .expense-table td { padding: 4px 6px; border-bottom: 0.5px solid #ece0d0; color: #2c1e0a; }
         .expense-table tr:last-child td { border-bottom: none; }
-        .expense-purchased td { color: #94a3b8; text-decoration: line-through; }
+        .expense-done td { color: #b0a090; }
         .text-right { text-align: right; }
-        .font-bold { font-weight: bold; }
+        .font-bold  { font-weight: bold; }
 
-        .expense-category {
-            font-size: 8px;
-            padding: 1px 5px;
-            border-radius: 3px;
-            display: inline-block;
+        .expense-cat { font-size: 7px; padding: 1px 5px; border-radius: 3px; }
+        .cat-material   { background: #e8f0fe; color: #3b5bdb; }
+        .cat-tool       { background: #fff3e0; color: #b45309; }
+        .cat-consumable { background: #f5f0e8; color: #7a6040; }
+        .cat-service    { background: #e6f4ea; color: #2d6a4f; }
+        .cat-other      { background: #f0ece6; color: #7a6040; }
+
+        /* =====================================================
+           LINKS
+           ===================================================== */
+        .link-item { margin-bottom: 4mm; padding-left: 10px; border-left: 1px solid #d4b896; }
+        .link-title { font-size: 10px; font-weight: bold; color: #2c1e0a; }
+        .link-url { font-family: 'DejaVu Sans Mono', monospace; font-size: 7.5px; color: #9c8060; word-break: break-all; }
+        .link-desc { font-family: 'DejaVu Sans', sans-serif; font-size: 8.5px; color: #7a6040; font-style: italic; margin-top: 1px; }
+
+        /* =====================================================
+           FILES
+           ===================================================== */
+        .file-table { width: 100%; border-collapse: collapse; }
+        .file-table tr { border-bottom: 0.5px solid #ece0d0; }
+        .file-table tr:last-child { border-bottom: none; }
+        .file-bullet-td {
+            width: 10px;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 9px;
+            color: #c4a882;
+            vertical-align: top;
+            padding: 3px 4px 3px 0;
         }
-        .category-material { background: #dbeafe; color: #1d4ed8; }
-        .category-tool { background: #ffedd5; color: #c2410c; }
-        .category-consumable { background: #f1f5f9; color: #475569; }
-        .category-service { background: #dcfce7; color: #16a34a; }
-        .category-other { background: #f5f5f4; color: #78716c; }
-
-        /* Links */
-        .link-item { margin-bottom: 10px; padding-left: 14px; position: relative; }
-        .link-item::before { content: '→'; position: absolute; left: 0; color: #f59e0b; }
-        .link-title { color: #d97706; font-weight: 500; }
-        .link-url { color: #94a3b8; font-size: 9px; }
-        .link-desc { color: #64748b; font-size: 10px; margin-top: 2px; }
-
-        /* Files */
-        .file-item { margin-bottom: 8px; padding-left: 14px; position: relative; }
-        .file-item::before { content: '◎'; position: absolute; left: 0; color: #f59e0b; font-size: 9px; top: 1px; }
-        .file-name { font-weight: 500; }
-        .file-meta { color: #94a3b8; font-size: 9px; }
-
-        /* Diary */
-        .timeline-entry {
-            border-left: 2px solid #f59e0b;
-            padding-left: 16px;
-            padding-bottom: 20px;
-            margin-left: 8px;
-            position: relative;
+        .file-name-td {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 9px;
+            color: #2c1e0a;
+            padding: 3px 0;
+            vertical-align: top;
         }
-        .timeline-entry:last-child { padding-bottom: 0; }
-        .timeline-entry::before {
-            content: '';
-            position: absolute;
-            left: -5px;
-            top: 2px;
-            width: 8px;
-            height: 8px;
-            background: #f59e0b;
-            border-radius: 50%;
+        .file-ext {
+            font-size: 7px;
+            background: #f5ede0;
+            color: #9c8060;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-left: 4px;
         }
-        .entry-date { font-size: 10px; color: #f59e0b; font-weight: 600; margin-bottom: 4px; }
-        .entry-title { font-size: 12px; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+
+        /* =====================================================
+           DIARY
+           ===================================================== */
+        .diary-entry {
+            margin-bottom: 6mm;
+            padding-bottom: 6mm;
+            border-bottom: 0.5px solid #ece0d0;
+        }
+        .diary-entry:last-child { border-bottom: none; margin-bottom: 0; }
+
+        .diary-table { width: 100%; border-collapse: collapse; }
+        .diary-date-td { width: 22mm; vertical-align: top; padding-right: 4mm; }
+        .diary-content-td { vertical-align: top; }
+
+        .entry-day-num {
+            font-size: 18px;
+            font-weight: bold;
+            color: #c4a882;
+            line-height: 1;
+        }
+        .entry-month-year {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #9c8060;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
         .entry-type {
+            font-family: 'DejaVu Sans', sans-serif;
             display: inline-block;
-            font-size: 8px;
+            font-size: 7px;
             padding: 1px 6px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .etype-progress  { background: #dbeafe; color: #1e40af; }
+        .etype-issue     { background: #fee2e2; color: #b91c1c; }
+        .etype-solution  { background: #dcfce7; color: #166534; }
+        .etype-milestone { background: #f3e8ff; color: #6d28d9; }
+        .etype-note      { background: #f5f0e8; color: #7a6040; }
+
+        .entry-title { font-size: 11px; font-weight: bold; color: #1c1409; margin-bottom: 2px; }
+        .entry-content {
+            font-size: 9.5px;
+            line-height: 1.65;
+            color: #2c1e0a;
+            text-align: justify;
+        }
+        .entry-content p { margin-bottom: 4px; }
+        .entry-content ul, .entry-content ol { margin-left: 12px; }
+        .entry-time {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7.5px;
+            color: #b0a090;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* =====================================================
+           COLOPHON
+           ===================================================== */
+        .chapter-colophon {
+            text-align: center;
+            margin-top: 8mm;
+            padding-top: 4mm;
+            border-top: 0.5px solid #d4b896;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 7px;
+            color: #c4a882;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
-        .entry-type-progress { background: #dbeafe; color: #1d4ed8; }
-        .entry-type-issue { background: #fee2e2; color: #dc2626; }
-        .entry-type-solution { background: #dcfce7; color: #16a34a; }
-        .entry-type-milestone { background: #f3e8ff; color: #9333ea; }
-        .entry-type-note { background: #f1f5f9; color: #475569; }
-        .entry-content { font-size: 10px; line-height: 1.65; color: #334155; }
-        .entry-content p { margin-bottom: 6px; }
-        .entry-content ul, .entry-content ol { margin-left: 14px; margin-bottom: 6px; }
-        .entry-time { font-size: 9px; color: #94a3b8; margin-top: 6px; }
-
-        /* Chapter separator */
-        .chapter-footer {
-            padding: 20px 50px;
-            text-align: center;
-            font-size: 9px;
-            color: #e2e8f0;
-            border-top: 1px solid #f1f5f9;
-            margin-top: 20px;
-        }
-
-        .page-break { page-break-after: always; }
     </style>
 </head>
 
 <body>
 
-{{-- ===== PORTADA ===== --}}
-<div class="cover">
-    <div class="cover-top-bar"></div>
-    <div class="cover-body">
-        <div class="cover-logo">📔 Build Diary</div>
-
-        <div class="cover-title">{{ __('app.public.book_cover_title') }}</div>
-        <div class="cover-subtitle">{{ $user->name }}</div>
-
-        <div class="cover-divider"></div>
-
-        <div class="cover-meta">
-            <strong>{{ $projects->count() }}</strong> {{ trans_choice('app.public.book_projects_count', $projects->count(), ['count' => $projects->count()]) }}<br>
-            {{ __('app.public.book_generated_on', ['date' => now()->format('d \d\e F \d\e Y')]) }}
-            @if ($projects->sum(fn ($p) => $p->diaryEntries->count()) > 0)
-                <br>{{ $projects->sum(fn ($p) => $p->diaryEntries->count()) }} {{ __('app.public.book_diary_entries') }}
-            @endif
-        </div>
-    </div>
-
-    <div class="cover-bottom">
-        <div class="cover-bottom-text">BUILD DIARY · {{ config('app.url') }}</div>
-    </div>
+{{-- ===== RUNNING HEADER / FOOTER ===== --}}
+<div id="running-header">
+    <span class="rh-left">{{ $user->name }}</span>
+    <span class="rh-right">{{ __('app.public.book_title') }}</span>
+    <div class="rh-clear"></div>
+</div>
+<div id="running-footer">
+    Build Diary &mdash; {{ now()->format('Y') }}
 </div>
 
-{{-- ===== ÍNDICE ===== --}}
-<div class="toc">
-    <div class="toc-heading">{{ __('app.public.book_toc') }}</div>
-    <div class="toc-subtitle">{{ $projects->count() }} {{ strtolower(trans_choice('app.public.book_projects_count', $projects->count(), ['count' => $projects->count()])) }}</div>
 
-    @foreach ($projects as $i => $project)
-        <div class="toc-item">
-            <div class="toc-item-number">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
-            <div class="toc-item-body">
-                <div class="toc-item-title">{{ $project->title }}</div>
-                <div class="toc-item-meta">
-                    @if ($project->category) {{ $project->category->name }} · @endif
-                    @if ($project->started_at) {{ $project->started_at->format('Y') }} @endif
-                    @if ($project->diaryEntries->count() > 0)
-                        · {{ $project->diaryEntries->count() }} {{ __('app.public.book_diary_entries') }}
-                    @endif
-                </div>
-            </div>
-            @if ($project->status)
-                <div class="toc-item-status">
-                    <span class="toc-status-badge" style="background-color: {{ $project->status->color }}20; color: {{ $project->status->color }};">
-                        {{ $project->status->name }}
-                    </span>
-                </div>
-            @endif
+{{-- ═══════════════════════════════════════════════════
+     PORTADA — full-bleed (body sin padding)
+     ═══════════════════════════════════════════════════ --}}
+<table class="cover-table">
+    <tr>
+        <td class="cover-outer-td">
+            <table class="cover-inner-table">
+                <tr>
+                    <td class="cover-inner-td">
+                        <div class="cover-publisher">Build Diary</div>
+                        <hr class="cover-rule">
+                        <div class="cover-title">{{ __('app.public.book_cover_title') }}</div>
+                        <div class="cover-ornament">&#10022; &#10022; &#10022;</div>
+                        <div class="cover-author">{{ $user->name }}</div>
+                        <hr class="cover-rule-narrow">
+                        <div class="cover-meta">
+                            {{ $projects->count() }} {{ strtolower(trans_choice('app.public.book_projects_count', $projects->count(), ['count' => $projects->count()])) }}<br>
+                            {{ __('app.public.book_generated_on', ['date' => now()->format('d \d\e F \d\e Y')]) }}
+                            @php $totalEntries = $projects->sum(fn ($p) => $p->diaryEntries->count()); @endphp
+                            @if ($totalEntries > 0)
+                                <br>{{ $totalEntries }} {{ __('app.public.book_diary_entries') }}
+                            @endif
+                        </div>
+                        <div class="cover-url">{{ config('app.url') }}</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+
+{{-- ═══════════════════════════════════════════════════
+     Todo el resto tiene márgenes horizontales
+     ═══════════════════════════════════════════════════ --}}
+<div class="content-wrapper">
+
+    {{-- ===== ÍNDICE ===== --}}
+    <div class="toc-page">
+        <div class="toc-header">
+            <div class="toc-label">{{ __('app.public.book_title') }}</div>
+            <div class="toc-title">{{ __('app.public.book_toc') }}</div>
+            <div class="toc-ornament">&#10022; &#10022; &#10022;</div>
         </div>
-    @endforeach
-</div>
-
-{{-- ===== CAPÍTULOS ===== --}}
-@foreach ($projects as $i => $project)
-<div class="chapter">
-
-    {{-- Cabecera del capítulo --}}
-    <div class="chapter-header">
-        <div class="chapter-number">{{ __('app.public.book_chapter') }} {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
-        <div class="chapter-title">{{ $project->title }}</div>
-
-        <div class="chapter-badges">
-            @if ($project->status)
-                <span class="badge" style="background-color: {{ $project->status->color }}20; color: {{ $project->status->color }};">
-                    {{ $project->status->name }}
-                </span>
-            @endif
-            @if ($project->category)
-                <span class="badge" style="background-color: {{ $project->category->color ?? '#64748b' }}20; color: {{ $project->category->color ?? '#64748b' }};">
-                    {{ $project->category->name }}
-                </span>
-            @endif
-            @if ($project->priority && $project->priority > 0)
+        <hr class="toc-rule">
+        <table class="toc-table">
+            @foreach ($projects as $i => $project)
                 @php
-                    $pc = match($project->priority) { 1=>'#22c55e', 2=>'#f59e0b', 3=>'#ef4444', default=>'#64748b' };
-                    $pl = match($project->priority) { 1=>__('app.public.priority_low'), 2=>__('app.public.priority_medium'), 3=>__('app.public.priority_high'), default=>'' };
+                    $romans = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
+                               'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
+                               'XXI','XXII','XXIII','XXIV','XXV'];
+                    $roman = $romans[$i] ?? ($i + 1);
                 @endphp
-                <span class="badge" style="background-color: {{ $pc }}20; color: {{ $pc }};">{{ $pl }}</span>
-            @endif
-            @if ($project->tags->count() > 0)
-                @foreach ($project->tags as $tag)
-                    <span class="tag" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }};">{{ $tag->name }}</span>
-                @endforeach
-            @endif
-        </div>
-
-        <div class="chapter-dates">
-            @if ($project->started_at)
-                <span>📅 {{ __('app.public.started') }}: {{ $project->started_at->format('d/m/Y') }}</span>
-            @endif
-            @if ($project->due_date)
-                <span>⏰ {{ __('app.public.due_date') }}: {{ $project->due_date->format('d/m/Y') }}</span>
-            @endif
-            @if ($project->completed_at)
-                <span>✅ {{ __('app.public.completed') }}: {{ $project->completed_at->format('d/m/Y') }}</span>
-            @endif
-        </div>
+                <tr>
+                    <td class="toc-num">{{ $roman }}</td>
+                    <td>
+                        <div class="toc-entry-title">{{ $project->title }}</div>
+                        <div class="toc-entry-sub">
+                            @if ($project->category){{ $project->category->name }}@if ($project->started_at || $project->diaryEntries->count() > 0), @endif @endif
+                            @if ($project->started_at){{ $project->started_at->format('Y') }} @endif
+                            @if ($project->diaryEntries->count() > 0)
+                                &middot; {{ $project->diaryEntries->count() }} {{ __('app.public.book_diary_entries') }}
+                            @endif
+                        </div>
+                    </td>
+                    @if ($project->status)
+                        <td class="toc-status">
+                            <span class="toc-badge" style="background-color:{{ $project->status->color }}22; color:{{ $project->status->color }};">
+                                {{ $project->status->name }}
+                            </span>
+                        </td>
+                    @else
+                        <td class="toc-status"></td>
+                    @endif
+                </tr>
+            @endforeach
+        </table>
     </div>
 
-    <div class="chapter-body">
+
+    {{-- ===== CAPÍTULOS ===== --}}
+    @foreach ($projects as $i => $project)
+    @php
+        $romans = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
+                   'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
+                   'XXI','XXII','XXIII','XXIV','XXV'];
+        $roman = $romans[$i] ?? ($i + 1);
+    @endphp
+    <div class="chapter">
+
+        <div class="chapter-opening">
+            <div class="chapter-label">{{ __('app.public.book_chapter', ['number' => '']) }}</div>
+            <div class="chapter-roman">{{ $roman }}</div>
+            <hr class="chapter-rule-short">
+            <div class="chapter-title">{{ $project->title }}</div>
+            <div class="chapter-ornament">&#10022; &#10022; &#10022;</div>
+
+            <div class="chapter-badges">
+                @if ($project->status)
+                    <span class="badge" style="background-color:{{ $project->status->color }}22; color:{{ $project->status->color }};">{{ $project->status->name }}</span>
+                @endif
+                @if ($project->category)
+                    <span class="badge" style="background-color:{{ $project->category->color ?? '#c4a882' }}22; color:{{ $project->category->color ?? '#9c8060' }};">{{ $project->category->name }}</span>
+                @endif
+                @if ($project->priority && $project->priority > 0)
+                    @php
+                        $pc = match($project->priority) { 1 => '#22c55e', 2 => '#d97706', 3 => '#dc2626', default => '#9c8060' };
+                        $pl = match($project->priority) { 1 => __('app.public.priority_low'), 2 => __('app.public.priority_medium'), 3 => __('app.public.priority_high'), default => '' };
+                    @endphp
+                    <span class="badge" style="background-color:{{ $pc }}22; color:{{ $pc }};">{{ $pl }}</span>
+                @endif
+                @foreach ($project->tags as $tag)
+                    <span class="badge" style="background-color:{{ $tag->color }}22; color:{{ $tag->color }};">{{ $tag->name }}</span>
+                @endforeach
+            </div>
+
+            @if ($project->started_at || $project->due_date || $project->completed_at)
+                <div class="chapter-dates">
+                    @if ($project->started_at){{ __('app.public.started') }}: {{ $project->started_at->format('d/m/Y') }}@endif
+                    @if ($project->due_date) &mdash; {{ __('app.public.due_date') }}: {{ $project->due_date->format('d/m/Y') }}@endif
+                    @if ($project->completed_at) &mdash; {{ __('app.public.completed') }}: {{ $project->completed_at->format('d/m/Y') }}@endif
+                </div>
+            @endif
+        </div>
 
         {{-- Dedicatoria --}}
         @if ($project->person)
             <div class="dedicated">
-                <div class="dedicated-avatar">
-                    <div class="dedicated-avatar-inner">{{ strtoupper(substr($project->person->name, 0, 1)) }}</div>
-                </div>
-                <div class="dedicated-text">
-                    <div class="dedicated-label">
-                        @if ($project->person_reason) {{ $project->person_reason_label }} {{ __('app.public.for') }}
-                        @else {{ __('app.public.dedicated_to') }} @endif
-                    </div>
-                    <div class="dedicated-name">{{ $project->person->name }}</div>
-                </div>
+                <div class="dedicated-label">{{ __('app.public.dedicated_to') }}</div>
+                <div class="dedicated-name">{{ $project->person->name }}</div>
+                @if ($project->person_reason)
+                    <div class="dedicated-reason">{{ $project->person_reason }}</div>
+                @endif
             </div>
         @endif
 
         {{-- Galería --}}
         @if ($project->files->where('type', 'image')->count() > 0)
             <div class="section">
-                <div class="section-title">📷 {{ __('app.public.image_gallery') }}</div>
-                <div class="gallery-grid">
-                    @foreach ($project->files->where('type', 'image')->take(6) as $file)
-                        <div class="gallery-item">
-                            <img src="{{ Storage::disk($file->disk)->path($file->path) }}" alt="{{ $file->description ?? $file->original_name }}">
-                            @if ($file->description)
-                                <div class="gallery-caption">{{ $file->description }}</div>
-                            @endif
-                        </div>
+                <div class="section-heading">{{ __('app.public.image_gallery') }}</div>
+                <hr class="section-rule">
+                <table class="gallery-table">
+                    @foreach ($project->files->where('type', 'image')->take(6)->chunk(2) as $row)
+                        <tr>
+                            @foreach ($row as $file)
+                                <td class="gallery-td">
+                                    <img src="{{ Storage::disk($file->disk)->path($file->path) }}" alt="{{ $file->description ?? $file->original_name }}">
+                                    @if ($file->description)
+                                        <div class="gallery-caption">{{ $file->description }}</div>
+                                    @endif
+                                </td>
+                            @endforeach
+                            @if ($row->count() === 1)<td class="gallery-td"></td>@endif
+                        </tr>
                     @endforeach
-                </div>
+                </table>
             </div>
         @endif
 
         {{-- Descripción --}}
         @if ($project->description)
             <div class="section">
-                <div class="section-title">{{ __('app.public.description') }}</div>
+                <div class="section-heading">{{ __('app.public.description') }}</div>
+                <hr class="section-rule">
                 <div class="description">
                     {!! Str::markdown($project->description, ['renderer' => ['soft_break' => "<br>\n"]]) !!}
                 </div>
@@ -563,74 +759,90 @@
         {{-- Checklist --}}
         @if ($project->tasks->count() > 0)
             @php
-                $done = $project->tasks->where('is_completed', true)->count();
-                $total = $project->tasks->count();
-                $pct = $total > 0 ? round(($done / $total) * 100) : 0;
+                $done     = $project->tasks->where('is_completed', true)->count();
+                $total    = $project->tasks->count();
+                $pct      = $total > 0 ? round(($done / $total) * 100) : 0;
+                $barColor = $pct === 100 ? '#4a8c5c' : '#c4a882';
             @endphp
             <div class="section">
-                <div class="section-title">📋 {{ __('app.public.checklist') }}</div>
-                <div class="checklist-progress">
-                    <span style="font-weight:600;">{{ __('app.public.tasks_completed', ['completed' => $done, 'total' => $total]) }}</span>
-                    <span style="float:right; color:{{ $pct===100?'#22c55e':'#f59e0b' }}; font-weight:600;">{{ $pct }}%</span>
-                    <div class="progress-bar">
-                        <div class="progress-bar-fill" style="width:{{ $pct }}%; background:{{ $pct===100?'#22c55e':'#f59e0b' }};"></div>
-                    </div>
+                <div class="section-heading">{{ __('app.public.checklist') }}</div>
+                <hr class="section-rule">
+                <div class="checklist-summary">
+                    {{ __('app.public.tasks_completed', ['completed' => $done, 'total' => $total]) }}
+                    &ensp;&mdash;&ensp; {{ $pct }}%
                 </div>
-                @foreach ($project->tasks as $task)
-                    <div class="task-item {{ $task->is_completed ? 'task-completed' : '' }}">
-                        {{ $task->is_completed ? '✓' : '○' }} {{ $task->title }}
-                        @if ($task->description)
-                            <span style="color:#94a3b8; font-size:9px;"> — {{ Str::limit($task->description, 60) }}</span>
-                        @endif
-                    </div>
-                @endforeach
+                <div class="progress-wrap">
+                    <div class="progress-fill" style="width:{{ $pct }}%; background:{{ $barColor }};"></div>
+                </div>
+                <table class="task-table">
+                    @foreach ($project->tasks as $task)
+                        <tr>
+                            <td class="task-check">{{ $task->is_completed ? '&#10003;' : '&#9675;' }}</td>
+                            <td class="task-text {{ $task->is_completed ? 'task-done-text' : '' }}">
+                                {{ $task->title }}
+                                @if ($task->description && !$task->is_completed)
+                                    <span style="color:#b0a090; font-size:8px; font-style:italic;"> &mdash; {{ Str::limit($task->description, 80) }}</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
             </div>
         @endif
 
         {{-- Presupuesto --}}
         @if ($project->expenses->count() > 0)
             <div class="section">
-                <div class="section-title">💰 {{ __('app.public.budget') }}</div>
-                <div class="budget-summary">
-                    <div class="budget-card" style="margin-right:6px;">
-                        <div class="budget-card-label">{{ __('app.public.total') }}</div>
-                        <div class="budget-card-value" style="color:#1e293b;">{{ number_format($project->total_budget, 2, ',', '.') }} €</div>
-                    </div>
-                    <div class="budget-card" style="margin-right:6px;">
-                        <div class="budget-card-label">{{ __('app.public.spent') }}</div>
-                        <div class="budget-card-value" style="color:#22c55e;">{{ number_format($project->spent_budget, 2, ',', '.') }} €</div>
-                    </div>
-                    <div class="budget-card">
-                        <div class="budget-card-label">{{ __('app.public.pending') }}</div>
-                        <div class="budget-card-value" style="color:#f59e0b;">{{ number_format($project->pending_budget, 2, ',', '.') }} €</div>
-                    </div>
-                </div>
+                <div class="section-heading">{{ __('app.public.budget') }}</div>
+                <hr class="section-rule">
+                <table class="budget-summary-table">
+                    <tr>
+                        <td class="budget-cell">
+                            <div class="budget-label">{{ __('app.public.total') }}</div>
+                            <div class="budget-value">{{ number_format($project->total_budget, 2, ',', '.') }} &euro;</div>
+                        </td>
+                        <td class="budget-cell" style="border-left:none;">
+                            <div class="budget-label">{{ __('app.public.spent') }}</div>
+                            <div class="budget-value" style="color:#4a8c5c;">{{ number_format($project->spent_budget, 2, ',', '.') }} &euro;</div>
+                        </td>
+                        <td class="budget-cell" style="border-left:none;">
+                            <div class="budget-label">{{ __('app.public.pending') }}</div>
+                            <div class="budget-value" style="color:#c4a882;">{{ number_format($project->pending_budget, 2, ',', '.') }} &euro;</div>
+                        </td>
+                    </tr>
+                </table>
                 <table class="expense-table">
                     <thead>
                         <tr>
-                            <th style="width:5%;"></th>
+                            <th style="width:4%;"></th>
                             <th style="width:38%;">{{ __('app.public.expense_item') }}</th>
-                            <th style="width:18%;">{{ __('app.public.expense_category_header') }}</th>
-                            <th style="width:18%;">{{ __('app.public.expense_quantity') }}</th>
-                            <th class="text-right" style="width:21%;">{{ __('app.public.total') }}</th>
+                            <th style="width:20%;">{{ __('app.public.expense_category_header') }}</th>
+                            <th style="width:16%;">{{ __('app.public.expense_quantity') }}</th>
+                            <th class="text-right" style="width:22%;">{{ __('app.public.total') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($project->expenses as $expense)
-                            <tr class="{{ $expense->is_purchased ? 'expense-purchased' : '' }}">
-                                <td>{{ $expense->is_purchased ? '✓' : '○' }}</td>
+                            @php
+                                $cc = match($expense->category) {
+                                    'material'   => 'cat-material',
+                                    'tool'       => 'cat-tool',
+                                    'consumable' => 'cat-consumable',
+                                    'service'    => 'cat-service',
+                                    default      => 'cat-other',
+                                };
+                            @endphp
+                            <tr class="{{ $expense->is_purchased ? 'expense-done' : '' }}">
+                                <td>{{ $expense->is_purchased ? '&#10003;' : '&#9675;' }}</td>
                                 <td>
                                     {{ $expense->name }}
                                     @if ($expense->supplier)
-                                        <span style="color:#94a3b8; font-size:9px;"> — {{ $expense->supplier }}</span>
+                                        <span style="color:#b0a090; font-size:7.5px;"> &mdash; {{ $expense->supplier }}</span>
                                     @endif
                                 </td>
-                                <td>
-                                    @php $cc = match($expense->category) { 'material'=>'category-material','tool'=>'category-tool','consumable'=>'category-consumable','service'=>'category-service',default=>'category-other' }; @endphp
-                                    <span class="expense-category {{ $cc }}">{{ $expense->category_label }}</span>
-                                </td>
+                                <td><span class="expense-cat {{ $cc }}">{{ $expense->category_label }}</span></td>
                                 <td>{{ $expense->quantity }}{{ $expense->unit ? ' '.$expense->unit : '' }}</td>
-                                <td class="text-right font-bold">{{ number_format($expense->total_price, 2, ',', '.') }} €</td>
+                                <td class="text-right font-bold">{{ number_format($expense->total_price, 2, ',', '.') }} &euro;</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -641,7 +853,8 @@
         {{-- Links --}}
         @if ($project->links->count() > 0)
             <div class="section">
-                <div class="section-title">🔗 {{ __('app.public.links') }}</div>
+                <div class="section-heading">{{ __('app.public.links') }}</div>
+                <hr class="section-rule">
                 @foreach ($project->links as $link)
                     <div class="link-item">
                         <div class="link-title">{{ $link->title }}</div>
@@ -657,74 +870,102 @@
         {{-- Archivos --}}
         @if ($project->files->where('type', '!=', 'image')->count() > 0)
             <div class="section">
-                <div class="section-title">📁 {{ __('app.public.downloadable_files') }}</div>
-                @foreach ($project->files->where('type', '!=', 'image') as $file)
-                    <div class="file-item">
-                        <span class="file-name">{{ $file->name }}</span>
-                        <span class="file-meta"> — {{ strtoupper(pathinfo($file->original_name, PATHINFO_EXTENSION)) }} · {{ number_format($file->size / 1024, 0) }} KB</span>
-                        @if ($file->description)
-                            <span class="file-meta"> · {{ $file->description }}</span>
-                        @endif
-                    </div>
-                @endforeach
+                <div class="section-heading">{{ __('app.public.downloadable_files') }}</div>
+                <hr class="section-rule">
+                <table class="file-table">
+                    @foreach ($project->files->where('type', '!=', 'image') as $file)
+                        <tr>
+                            <td class="file-bullet-td">&bull;</td>
+                            <td class="file-name-td">
+                                {{ $file->name }}
+                                <span class="file-ext">{{ strtoupper(pathinfo($file->original_name, PATHINFO_EXTENSION)) }}</span>
+                                <span style="color:#b0a090; font-size:7.5px;"> &mdash; {{ number_format($file->size / 1024, 0) }} KB</span>
+                                @if ($file->description)
+                                    <span style="color:#7a6040; font-size:8px; font-style:italic;"> &mdash; {{ $file->description }}</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
             </div>
         @endif
 
         {{-- Diario --}}
         @if ($project->diaryEntries->count() > 0)
             <div class="section">
-                <div class="section-title">✏️ {{ __('app.public.project_diary') }}</div>
-                <div style="margin-top: 14px;">
-                    @foreach ($project->diaryEntries as $entry)
-                        <div class="timeline-entry">
-                            <div class="entry-date">{{ $entry->entry_date->format('d M Y') }}</div>
+                <div class="section-heading">{{ __('app.public.project_diary') }}</div>
+                <hr class="section-rule">
 
-                            @if ($entry->type)
-                                @php
-                                    $tc = match($entry->type) { 'progress'=>'entry-type-progress','issue'=>'entry-type-issue','solution'=>'entry-type-solution','milestone'=>'entry-type-milestone',default=>'entry-type-note' };
-                                    $tl = match($entry->type) { 'progress'=>__('app.public.entry_types.progress'),'issue'=>__('app.public.entry_types.issue'),'solution'=>__('app.public.entry_types.solution'),'milestone'=>__('app.public.entry_types.milestone'),'note'=>__('app.public.entry_types.note'),default=>ucfirst($entry->type) };
-                                @endphp
-                                <span class="entry-type {{ $tc }}">{{ $tl }}</span>
-                            @endif
+                @foreach ($project->diaryEntries as $entry)
+                    <div class="diary-entry">
+                        <table class="diary-table">
+                            <tr>
+                                <td class="diary-date-td">
+                                    <div class="entry-day-num">{{ $entry->entry_date->format('d') }}</div>
+                                    <div class="entry-month-year">{{ $entry->entry_date->format('M Y') }}</div>
+                                </td>
+                                <td class="diary-content-td">
+                                    @if ($entry->type)
+                                        @php
+                                            $tc = match($entry->type) {
+                                                'progress'  => 'etype-progress',
+                                                'issue'     => 'etype-issue',
+                                                'solution'  => 'etype-solution',
+                                                'milestone' => 'etype-milestone',
+                                                default     => 'etype-note',
+                                            };
+                                            $tl = match($entry->type) {
+                                                'progress'  => __('app.public.entry_types.progress'),
+                                                'issue'     => __('app.public.entry_types.issue'),
+                                                'solution'  => __('app.public.entry_types.solution'),
+                                                'milestone' => __('app.public.entry_types.milestone'),
+                                                default     => __('app.public.entry_types.note'),
+                                            };
+                                        @endphp
+                                        <span class="entry-type {{ $tc }}">{{ $tl }}</span>
+                                    @endif
 
-                            @if ($entry->title)
-                                <div class="entry-title">{{ $entry->title }}</div>
-                            @endif
+                                    @if ($entry->title)
+                                        <div class="entry-title">{{ $entry->title }}</div>
+                                    @endif
 
-                            <div class="entry-content">{!! $entry->content !!}</div>
+                                    <div class="entry-content">{!! $entry->content !!}</div>
 
-                            @if ($entry->images->count() > 0)
-                                @php $imgs = $entry->images->take(3); $imgCount = $imgs->count(); @endphp
-                                <div style="margin-top:8px;">
-                                    <table style="width:{{ $imgCount * 32 }}%; border-collapse:collapse;">
-                                        <tr>
-                                            @foreach ($imgs as $image)
-                                                <td style="width:32%; padding:3px; vertical-align:top;">
-                                                    <img src="{{ Storage::disk($image->disk)->path($image->path) }}" style="width:100%; height:auto; border:1px solid #e2e8f0;" alt="{{ $image->caption ?? '' }}">
-                                                </td>
-                                            @endforeach
-                                        </tr>
-                                    </table>
-                                </div>
-                            @endif
+                                    @if ($entry->images->count() > 0)
+                                        <table style="width:100%; border-collapse:collapse; margin-top:4px;">
+                                            <tr>
+                                                @foreach ($entry->images->take(3) as $image)
+                                                    <td style="width:32%; padding:2px; vertical-align:top;">
+                                                        <img src="{{ Storage::disk($image->disk)->path($image->path) }}"
+                                                             style="width:100%; height:auto; border:0.5px solid #d4b896;"
+                                                             alt="{{ $image->caption ?? '' }}">
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        </table>
+                                    @endif
 
-                            @if ($entry->time_spent_minutes)
-                                <div class="entry-time">⏱ {{ __('app.public.time_dedicated', ['hours' => floor($entry->time_spent_minutes / 60), 'minutes' => $entry->time_spent_minutes % 60]) }}</div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
+                                    @if ($entry->time_spent_minutes)
+                                        <div class="entry-time">
+                                            {{ __('app.public.time_dedicated', ['hours' => floor($entry->time_spent_minutes / 60), 'minutes' => $entry->time_spent_minutes % 60]) }}
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                @endforeach
             </div>
         @endif
 
-    </div>{{-- /chapter-body --}}
+        <div class="chapter-colophon">
+            {{ $user->name }} &nbsp;&mdash;&nbsp; {{ $roman }} &nbsp;&mdash;&nbsp; {{ $project->title }}
+        </div>
 
-    <div class="chapter-footer">
-        {{ $user->name }} · Build Diary · {{ now()->format('Y') }}
-    </div>
+    </div>{{-- /chapter --}}
+    @endforeach
 
-</div>{{-- /chapter --}}
-@endforeach
+</div>{{-- /content-wrapper --}}
 
 </body>
 </html>
