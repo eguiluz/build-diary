@@ -135,7 +135,7 @@
                                 <span>{{ $project->updated_at->diffForHumans() }}</span>
                                 @if ($project->category)
                                     <span class="rounded bg-slate-100 px-2 py-0.5 dark:bg-slate-700">
-                                        {{ $project->category }}
+                                        {{ $project->category->name }}
                                     </span>
                                 @endif
                             </div>

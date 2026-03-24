@@ -17,7 +17,7 @@ final class PublicGalleryController extends Controller
             ->where('is_public', true)
             ->with(['files' => function ($query): void {
                 $query->where('type', 'image')->orderBy('order');
-            }, 'status', 'tags'])
+            }, 'status', 'tags', 'category'])
             ->withCount(['files as images_count' => function ($query): void {
                 $query->where('type', 'image');
             }])
